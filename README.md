@@ -8,7 +8,7 @@ Json Pattern Validator.
 
 ## Install
 
-Release (`1.x`)
+Release (`1.1.x`)
 
 ```sh
 $ npm install jpv --save
@@ -55,7 +55,7 @@ else{
 
 ### Pattern Types
 
-**jpv** allows you use 5 types - **fixed**, **standard**, **library**, **regex** and last type is **constructor** type.
+**jpv** allows you to use 5 types - **fixed**, **standard**, **library**, **regex** and last type is **constructor** type.
 
 ##### Fixed
 
