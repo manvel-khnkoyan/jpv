@@ -1,0 +1,29 @@
+{
+  "name": "jpv",
+  "version": "1.0.0",
+  "description": "Json Pattern Validator",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manvel-khnkoyan/jpv.git"
+  },
+  "keywords": [
+    "json",
+    "pattern",
+    "validator",
+    "schema",
+    "node",
+    "javascript",
+    "regex",
+    "validate"
+  ],
+  "author": "Manvel Khnkoyan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manvel-khnkoyan/jpv/issues"
+  },
+  "homepage": "https://github.com/manvel-khnkoyan/jpv#readme"
+}
