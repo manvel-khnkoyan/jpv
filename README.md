@@ -2,7 +2,7 @@
 jpv
 ==========
 
-#####Json Pattern Validator.
+Json Pattern Validator.
 
 ****jpv*** designed for validating json format, using variety structures* 
 
