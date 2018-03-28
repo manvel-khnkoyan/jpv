@@ -4,7 +4,7 @@ jpv
 
 Json Pattern Validator.
 
-****jpv*** designed for validating json format, using variety structures* 
+****jpv*** designed for validating json schemas using json pattern
 
 ## Install
 
@@ -16,7 +16,9 @@ $ npm install jpv --save
 
 ## Usage
 
-Just build pattern like a validation object, then use command ``` validate ``` to validate json.
+Create pattern like a verifiable object, then use ``` validate ``` method to validate. 
+
+> validate() method returns a boolean (true/false) 
 
 ```javascript
 
@@ -55,11 +57,11 @@ else{
 
 ### Pattern Types
 
-**jpv** allows you to use 5 types - **fixed**, **standard**, **library**, **regex** and last type is **constructor** type.
+There are 5 types : **fixed**, **native**, **logical**, **regex** and last type is **constructor** type.
 
 ##### Fixed
 
-This type is used for fixed values. 
+Fixed type is useful when is checking exact values 
  
 ```javascript
     var pattern = {
@@ -71,20 +73,21 @@ This type is used for fixed values.
       }
     }
 ```
-
-Pay attention, if you use fixed type, types must be the same  
+> When is used fixed values, their types must be identical as well.
 
 ```javascript
     var json = {
       key : 98
     };
-    
+
+    // 1 pattern
     var pattern1 = {
       key : 98
     };
-    
+
+    // 2 pattern
     var pattern2 = {
-      key : '98'
+      key : "98"
     };
     
     console.log( jpv.validate(json, pattern1) ) // --> true
@@ -92,52 +95,57 @@ Pay attention, if you use fixed type, types must be the same
 
 ```
 
-##### Standard Types
+##### Native Types
 
-This types is helpfull if you want to use javascript standard types **boolean**,**null**,**undefined**,**number**,**string**,**symbol**.
+Native Types used to validate bay javascript native types : **boolean**,**null**,**undefined**,**number**,**string**,**symbol** and **object**.
 
-To use standard types in patterns need to use bracket ```(type)```
-
+Native types patterns is ```(type)```
  
 ```javascript
     var json = {
       key1 : 98,
-      key2 : false
+      key2 : false,
+      key3 : null
     };
     
     var pattern = {
       key1 : '(number)',
-      key2 : '(boolean)'
+      key2 : '(boolean)',
+      key3 : '(null)'
     };
-    
+
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-##### Library Types
+##### Logical Types
 
-To use library types in patterns need to use this format ```[type]```
+Logical Types involved to define most usefull patterns, and make a usage easier
 
+Native types patterns is ```[type]```
  
 ```javascript
     var json = {
       key1 : '2017-12-25',
-      key2 : 'user@gmail.com'
+      key2 : 'user@gmail.com',
+      key3 : []
     };
     
     var pattern = {
       key1 : '[date]',
-      key2 : '[email]'
+      key2 : '[email]',
+      key3 : '[empty]'
     };
     
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-Below list of library types:
+Available logical types:
  
-| library type  | example                   |                   |
+| Logical Type  | Example                   |                   |
 | --------------|:-------------------------:|------------------:|
+| exist         |                           | is key exist      |
+| empty         |                           | empty string      |
 | boolean       | True                      | case insensitive  | 
-| string        | any string                | --                |
 | double        | 12.258028                 | --                |
 | naturalNumber | 2                         | 0 is not natural  |
 | number        | 0284                      | --                |
@@ -151,14 +159,13 @@ Below list of library types:
 
 ##### Regular Expression
 
-This type is mostly used for your need, actually *"Library Types"* are also "Regular Expression" tyep defined in library.
+This type is most common type, in fact *"Logical Types"* made by *"Regular Expression"* type.
 
-Using this type is simple: 
+Use pure *regex* as a pattern. 
 
- 
 ```javascript
     var json = {
-      key : 'A-3'
+      key : 'A-8'
     };
     
     var pattern = {
@@ -168,12 +175,25 @@ Using this type is simple:
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-note that before trying to match, library is converting value to string
+> when is used regex patterns befor trying to match, every value is stringifying. Bollean true becomes string *"true"*, null becomes string *"null"* and etc.
+
+
+```javascript    
+    var pattern = {
+      isThisKeySet : '/.*/',
+    };
+
+    // or
+    var pattern = {
+      isThisKeySet : '[set]',
+    };
+
+```
 
 
 ##### Constructor
 
-This type is intended for validating arrays. In case when you want to validate array, simplest way to do it just compare object`s constructors
+This type is especially created to validating Arrays. When constructors of object and pattern aren't primitive types no not an objects, is compared their constructors.
 
 ```javascript
     var json = {
@@ -187,35 +207,10 @@ This type is intended for validating arrays. In case when you want to validate a
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-
----
-
-Note*, if you want to validate objects or array or you want to validate both of types and valuse you have to use multiple patterns :
- 
- 
-```javascript
-    
-    var json = {
-      key : 5789
-    };
-    
-    var patternForTypes = {
-       key : '(number)'
-    };
-    
-    var patterForValue = {
-      key : /[0-9]{3}/
-    };
-    
-    console.log(  jpv.validate(json, patternForTypes) && jpv.validate(json, patterForValue) ) // --> false
-```
- 
-
 ## Modes
 
-There are two ```standard``` and ```strict``` modes to use.
-When is used standard mode then validation object can include other keys too, but in strict mode validation object and pattern json structure must be the same: 
-
+There are two ```standard``` and ```strict``` modes.
+When is used standard mode then validation object can include other keys too, but in strict mode validation object and pattern  must have the same "key-value" hierarchy.
  
 ```javascript
     
@@ -241,9 +236,78 @@ When is used standard mode then validation object can include other keys too, bu
     };
     
     // strict mode
-    console.log(  jpv.validate(json, pattern, true ) )  // --> true
+    console.log(  jpv.validate(json, pattern, true ) )  // --> true 
     
+```
+
+
+## Not / Logical negation (!) / Operator
+
+jpv also allows you to use negations ("!") for *native* and *logical* types
+ 
+```javascript
     
+    // Example 1
+    var json = {
+      key : 5789
+    };
+    
+    var pattern = {
+      key : '!(number)'
+    };
+    
+    console.log(  jpv.validate(json, pattern)  )    // --> false
+
+    // Example 2
+    var json = {
+      key1 : [2],
+      key2 : "Yes",
+      key3 : [2,3]
+    };
+    
+    var pattern = {
+      key1 : '!(number)',
+      key2 : '!(number)',
+      key3 : '![empty]'
+    };
+
+    // strict mode
+    console.log(  jpv.validate(json, pattern) )     // --> true
+
+
+    // Example 2
+    var json = {
+      key : {}
+    };
+    
+    var pattern = {
+      key : '![number]'
+    };
+    
+    console.log(  jpv.validate(json, pattern)  )    // --> true
+
+```
+
+## Multiple Valifdation 
+
+For example when need to validate types and then values, need to do it twice and create aparted patterns.
+ 
+```javascript
+    
+    var json = {
+      key : 5789
+    };
+    
+    var patternForTypes = {
+      key : '(number)'
+    };
+    
+    var patterForValue = {
+      key : /[0-9]{3}/
+    };
+    
+    console.log(  jpv.validate(json, patternForTypes) && jpv.validate(json, patterForValue) ) // --> false
+
 ```
 
 
@@ -252,6 +316,6 @@ When is used standard mode then validation object can include other keys too, bu
 
 ```
 sudo apt install node-tap
-sudo npm install --g tap
+sudo npm install tap
 tap test/*.js
 ```

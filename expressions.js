@@ -4,12 +4,15 @@
  */
 
 module.exports =  {
+
+  //
+  exist : /.*/,
+
+  //
+  empty : /^$/,
   
   // 
-  boolean : /^(true|false)$/i, 
-  
-  // 
-  string : /.*/,
+  boolean : /^(true|false)$/i,   
   
   //
   double : /^-?\d*(\.\d+)?$/,

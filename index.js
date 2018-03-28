@@ -11,33 +11,32 @@
  */
 var expressions = require('./expressions.js');
 
-var compareStandart = ( value , pattern ) => {
-
-  
-
-  // when pattern is undefined
-  if( typeof pattern === 'undefined'  ){
-    return true
-  }
+var compareCommon = ( value , pattern ) => {
 
   // by given regex
   if( pattern instanceof RegExp ){
     return String(value).match(pattern)
   }
 
+  if(pattern === null){
+    throw 'do not use null as a pattern value, insted of it use "(null)" or "!(null)" patterns'
+  }
+
   // by static types
-  let matches = pattern.match(/^\((.*)\)$/i)
-  if( matches !== null && (matches[1] in expressions) ){
-    return typeof value === matches[1] 
+  let matches = pattern.match(/^(\!)?\((.*)\)$/i)
+  if( matches !== null ){
+    let match = (value === null ? matches[2] === 'null' : (typeof value === matches[2]) );
+    return matches[1] === '!' ? !match : match;
   }
 
   // when pattern is a string
   if( typeof pattern === 'string'  ){
     
     // by dynamic types
-    let matches = pattern.match(/^\[(.*)\]$/i)
-    if( matches !== null && (matches[1] in expressions) ){
-      return String(value).match(expressions[matches[1]])
+    let matches = pattern.match(/^(\!)?\[(.*)\]$/i)
+    if( matches !== null && (matches[2] in expressions) ){
+      let match = String(value).match(expressions[matches[2]]) !== null;
+      return matches[1] === '!' ? !match : match;
     }
 
     // by exact values
@@ -49,50 +48,28 @@ var compareStandart = ( value , pattern ) => {
   
 }
 
+var compareStandart = ( value , pattern ) => {
+  // when pattern is undefined
+  if( typeof pattern === 'undefined'  ){
+    return true
+  }
+  return compareCommon( value , pattern )
+}
+
 
 var compareStrict = ( value , pattern ) => {
-
   // when pattern is undefined
   if( typeof pattern === 'undefined'  ){
     return false
   }
-
-  // by given regex
-  if( pattern instanceof RegExp ){
-    return String(value).match(pattern)
-  }
-
-  // by static types
-  let matches = pattern.match(/^\((.*)\)$/i)
-  if( matches !== null && (matches[1] in expressions) ){
-    return typeof value === matches[1] 
-  }
-
-  // when pattern is a string
-  if( typeof pattern === 'string'  ){
-    
-    // by static types
-    let matches = pattern.match(/^\[(.*)\]$/i)
-    if( matches !== null && (matches[1] in expressions) ){
-      return String(value).match(expressions[matches[1]])
-    }
-
-    // by exact values
-    return value === pattern
-  }
-
-  // by constructor
-  return value.constructor === pattern.constructor
-  
+  return compareCommon( value , pattern )
 }
 
 var compareExistance = ( obj1, obj2 ) => {
-
   // when pattern is undefined
   if( typeof obj2 === 'undefined'  ){
     return false
   }
-
   return true
 }
 
@@ -109,9 +86,16 @@ var iterate  = (obj1, obj2, valid, cb ) => {
   for (var property in obj1) {
 
     if (obj1.hasOwnProperty(property)) {
+      
+      // case with null
+      if( obj1[property] === null || obj2[property] === null ){
+        if( !(valid = cb( obj1[property], obj2[property])) ){
+          return false
+        }
+      }
 
       // iterate recursavely 
-      if ( obj1[property].constructor === Object) {
+      else if ( obj1[property].constructor === Object) {
         if ( obj2[property].constructor !== Object ) {
           if( !(valid = cb( obj1[property], obj2[property])) ){
             return false
@@ -144,7 +128,7 @@ var iterate  = (obj1, obj2, valid, cb ) => {
 }
 
 var standartValidate = (json, pattern) => {
-  return iterate(json, pattern, true, compareStandart ) && iterate( pattern, json, true, compareExistance )
+  return iterate(json, pattern, true, compareStandart ); // && iterate( pattern, json, true, compareExistance )
 }
 
 var strictValidate = (json, pattern) => {
