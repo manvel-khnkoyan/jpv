@@ -4,7 +4,7 @@ jpv
 
 Json Pattern Validator.
 
-****jpv*** designed for validating json schemas using json pattern
+***jpv***  - designed for validating json schemes using json pattern
 
 ## Install
 
@@ -18,7 +18,7 @@ $ npm install jpv --save
 
 Create pattern like a verifiable object, then use ``` validate ``` method to validate. 
 
-> validate() method returns a boolean (true/false) 
+> validate() method returns boolean (true/false) 
 
 ```javascript
 
@@ -59,7 +59,7 @@ else{
 
 There are 5 types : **fixed**, **native**, **logical**, **regex** and last type is **constructor** type.
 
-##### Fixed
+#### Fixed
 
 Fixed type is useful when is checking exact values 
  
@@ -95,7 +95,7 @@ Fixed type is useful when is checking exact values
 
 ```
 
-##### Native Types
+#### Native Types
 
 Native Types used to validate bay javascript native types : **boolean**,**null**,**undefined**,**number**,**string**,**symbol** and **object**.
 
@@ -117,9 +117,9 @@ Native types patterns is ```(type)```
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-##### Logical Types
+#### Logical Types
 
-Logical Types involved to define most usefull patterns, and make a usage easier
+Logical Types involved to define most useful patterns, and make a usage easier
 
 Native types patterns is ```[type]```
  
@@ -145,7 +145,7 @@ Available logical types:
 | --------------|:-------------------------:|------------------:|
 | exist         |                           | is key exist      |
 | empty         |                           | empty string      |
-| boolean       | True                      | case insensitive  | 
+| boolean       | True                      | case-insensitive  | 
 | double        | 12.258028                 | --                |
 | naturalNumber | 2                         | 0 is not natural  |
 | number        | 0284                      | --                |
@@ -157,7 +157,7 @@ Available logical types:
 | datetime      | 2017-03-25 10:30:58.235   | --                |
 
 
-##### Regular Expression
+#### Regular Expression
 
 This type is most common type, in fact *"Logical Types"* made by *"Regular Expression"* type.
 
@@ -175,7 +175,7 @@ Use pure *regex* as a pattern.
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-> when is used regex patterns befor trying to match, every value is stringifying. Bollean true becomes string *"true"*, null becomes string *"null"* and etc.
+> when is used regex patterns before trying to match, every value is stringifying. Boolean true becomes string *"true"*, null becomes string *"null"* and etc.
 
 
 ```javascript    
@@ -191,9 +191,9 @@ Use pure *regex* as a pattern.
 ```
 
 
-##### Constructor
+#### Constructor
 
-This type is especially created to validating Arrays. When constructors of object and pattern aren't primitive types no not an objects, is compared their constructors.
+This type is especially created to validating Arrays. When constructors of object and pattern aren't primitive types or not objects, is compared their constructors.
 
 ```javascript
     var json = {
@@ -288,9 +288,9 @@ jpv also allows you to use negations ("!") for *native* and *logical* types
 
 ```
 
-## Multiple Valifdation 
+## Multiple Validation 
 
-For example when need to validate types and then values, need to do it twice and create aparted patterns.
+For example when need to validate types and then values, need to do it twice and create separate patterns.
  
 ```javascript
     
