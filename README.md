@@ -51,9 +51,7 @@ else{
 
 // output is:  "Valid"
 
-
 ```
-
 
 ### Pattern Types
 
@@ -176,19 +174,6 @@ Use pure *regex* as a pattern.
 ```
 
 > when is used regex patterns before trying to match, every value is stringifying. Boolean true becomes string *"true"*, null becomes string *"null"* and etc.
-
-
-```javascript    
-    var pattern = {
-      isThisKeySet : '/.*/',
-    };
-
-    // or
-    var pattern = {
-      isThisKeySet : '[set]',
-    };
-
-```
 
 
 #### Constructor
