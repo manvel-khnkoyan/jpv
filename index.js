@@ -23,9 +23,17 @@ var compareCommon = ( value , pattern ) => {
   }
 
   // by static types
-  let matches = pattern.match(/^(\!)?\((.*)\)$/i)
+  let matches = pattern.match(/^(\!)?\((.*)\)(\?)?$/i)
   if( matches !== null ){
     let match = (value === null ? matches[2] === 'null' : (typeof value === matches[2]) );
+    
+    // for ? operator
+    if( typeof matches[3] !== 'undefined' ){
+      if ( value === null || typeof value === 'undefined' || value === '' ){
+        return true
+      }
+    }
+
     return matches[1] === '!' ? !match : match;
   }
 
@@ -33,9 +41,17 @@ var compareCommon = ( value , pattern ) => {
   if( typeof pattern === 'string'  ){
     
     // by dynamic types
-    let matches = pattern.match(/^(\!)?\[(.*)\]$/i)
+    let matches = pattern.match(/^(\!)?\[(.*)\](\?)?$/i)
     if( matches !== null && (matches[2] in expressions) ){
       let match = String(value).match(expressions[matches[2]]) !== null;
+
+      // for ? operator
+      if( typeof matches[3] !== 'undefined' ){
+        if ( value === null || typeof value === 'undefined' || value === '' ){
+          return true
+        }
+      }
+
       return matches[1] === '!' ? !match : match;
     }
 

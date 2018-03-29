@@ -24,7 +24,7 @@ module.exports =  {
   naturalNumber : /^[1-9][0-9]*$/,
   
   //
-  number : /[0-9]+/i,
+  number : /^[0-9]+$/i,
   
   //
   integer : /^\d+$/,
