@@ -179,7 +179,7 @@ This type is useful to validate Arrays and Objects. When pattern key is an objec
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-another example by objects
+another example:
 
 ```javascript
    
