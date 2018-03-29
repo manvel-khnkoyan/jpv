@@ -46,7 +46,7 @@ console.log( 'valid: ', jsv.validate(json, pattern ) // --> "valid: true"
 
 ## Pattern Types
 
-There are 5 types : **fixed**, **native**, **logical**, **regex** and **constructor** type.
+There are 5 types : **Fixed**, **Native**, **Logical**, **Regex** and **Constructor** type.
 
 #### Fixed
 
@@ -158,7 +158,7 @@ Available Logical Types:
     console.log( jpv.validate(json, pattern) ) // --> true
 ```
 
-> before matching through regex, every type is converting to string. Boolean *true* becomes string *"true"*, null becomes string *"null"* and etc.
+> before matching through regex, every type is converting to string. Boolean **true** becomes string **"true"**, null becomes string **"null"** and etc.
 
 
 #### Constructor
@@ -234,7 +234,7 @@ In standard mode "pattern" can miss properties or even can be empty, but in stri
 
 ## Not / Logical negation (!) / Operator
 
-Negations ("!") operator is used for only *native* and *logical* types.
+Negations ("!") operator is used for only *Native* and *Logical* types.
  
 ```javascript
     
@@ -285,9 +285,9 @@ Negations ("!") operator is used for only *native* and *logical* types.
 
 ## Empty or Match (?) Operator
 
-This operator is used when given value is allowed to be empty as well. It works like a regex *?* operator.
+This operator is used when given value is allowed to be empty as well. It works like a regex **?** operator.
 
-Current operator ("!") is used for only with *native* and *logical* types. 
+Current operator ("!") is used for only with *Native* and *Logical* types. 
  
 ```javascript
     
@@ -336,7 +336,7 @@ If need to validate multiple patterns, you have to use different patterns.
       jpv.validate(json, patternForTypes)  // --> true
         && 
       jpv.validate(json, patterForValue)   // --> false
-    ) // --> false
+    ) 
 
 ```
 
