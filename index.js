@@ -9,59 +9,76 @@
 /*
  * Static Types created by Regular Expression
  */
-var expressions = require('./expressions.js');
+var expressions = require('./expressions.js')
 
+// there couldn't be undefined or null pattern
 var compareCommon = ( value , pattern ) => {
 
-  // by given regex
+  // pattern = regex
   if( pattern instanceof RegExp ){
     return String(value).match(pattern)
   }
 
-  if(pattern === null){
-    throw 'do not use null as a pattern value, insted of it use "(null)" or "!(null)" patterns'
-  }
+  // pattern = string
+  if( (typeof pattern === 'string') ){
 
-  // by static types
-  let matches = pattern.match(/^(\!)?\((.*)\)(\?)?$/i)
-  if( matches !== null ){
-    let match = (value === null ? matches[2] === 'null' : (typeof value === matches[2]) );
-    
-    // for ? operator
-    if( typeof matches[3] !== 'undefined' ){
-      if ( value === null || typeof value === 'undefined' || value === '' ){
-        return true
+    // Native Types 
+    let nativeMatches = pattern.match(/^(\!)?\((.*)\)(\?)?$/i)
+    if( nativeMatches !== null ){
+
+      let match = (value === null ? nativeMatches[2] === 'null' : (typeof value === nativeMatches[2]) )
+      
+      // Negation ? Operator
+      if( typeof nativeMatches[3] !== 'undefined' ){
+        if ( value === null || typeof value === 'undefined' || value === '' ){
+          return true
+        }
       }
+  
+      return nativeMatches[1] === '!' ? !match : match
     }
+  
+    // Logical Types
+    let logicalMatches = pattern.match(/^(\!)?\[(.*)\](\?)?$/i)
+    if( logicalMatches !== null && (logicalMatches[2] in expressions) ){
+      
+      let match = (String(value).match(expressions[logicalMatches[2]]) !== null)
 
-    return matches[1] === '!' ? !match : match;
-  }
-
-  // when pattern is a string
-  if( typeof pattern === 'string'  ){
-    
-    // by dynamic types
-    let matches = pattern.match(/^(\!)?\[(.*)\](\?)?$/i)
-    if( matches !== null && (matches[2] in expressions) ){
-      let match = String(value).match(expressions[matches[2]]) !== null;
-
-      // for ? operator
-      if( typeof matches[3] !== 'undefined' ){
+      // Negation ? Operator
+      if( typeof logicalMatches[3] !== 'undefined' ){
         if ( value === null || typeof value === 'undefined' || value === '' ){
           return true
         }
       }
 
-      return matches[1] === '!' ? !match : match;
+      return logicalMatches[1] === '!' ? !match : match
     }
 
-    // by exact values
+    // Excact Type
     return String(value) == String(pattern)
   }
 
-  // by constructor
-  return value.constructor === pattern.constructor
-  
+  // pattern = number | boolean | symbol 
+  if( (typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean') ){
+    return pattern === pattern
+  }
+
+  // pattern = object
+  if( typeof pattern === 'object' ){
+
+    if( typeof pattern !== typeof value ){
+      return false
+    }
+
+    if( pattern !== null && value !== null  ){
+      return value.constructor.name === pattern.constructor.name
+    }
+
+    return value === pattern
+  }
+    
+  throw 'error: don`t use '+ (typeof pattern) +' as a pattern value, insted of it use string format'
+
 }
 
 var compareStandart = ( value , pattern ) => {
@@ -102,31 +119,19 @@ var iterate  = (obj1, obj2, valid, cb ) => {
   for (var property in obj1) {
 
     if (obj1.hasOwnProperty(property)) {
-      
-      // case with null
-      if( obj1[property] === null || obj2[property] === null ){
+
+      // case with null or undefined
+      if( obj1[property] === null || obj2[property] === null || typeof obj1[property] === 'undefined' || typeof obj2[property] === 'undefined' ){        
         if( !(valid = cb( obj1[property], obj2[property])) ){
           return false
         }
       }
 
-      // iterate recursavely 
-      else if ( obj1[property].constructor === Object) {
-        if ( obj2[property].constructor !== Object ) {
-          if( !(valid = cb( obj1[property], obj2[property])) ){
-            return false
-          }
+      // iterate recursavely when object and json are objects / and when pattern has other keys
+      else if ( (obj1[property].constructor === Object) && (obj2[property].constructor === Object) && (Object.keys(obj2[property]).length !== 0) ) {
+        if( !(valid = iterate(obj1[property], obj2[property], valid, cb ) ) ){
+          return false
         }
-        else{
-          if( !(valid = iterate(obj1[property], obj2[property], valid, cb ) ) ){
-            return false
-          }
-        }
-      }
-      
-      // when pattern is object instead of simple type
-      else if( (typeof obj2[property] !== 'undefined') && (obj2[property].constructor === Object) ) {
-        return false
       }
 
       // 
@@ -144,7 +149,7 @@ var iterate  = (obj1, obj2, valid, cb ) => {
 }
 
 var standartValidate = (json, pattern) => {
-  return iterate(json, pattern, true, compareStandart ); // && iterate( pattern, json, true, compareExistance )
+  return iterate(json, pattern, true, compareStandart ) // && iterate( pattern, json, true, compareExistance )
 }
 
 var strictValidate = (json, pattern) => {
