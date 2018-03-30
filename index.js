@@ -60,7 +60,7 @@ var compareCommon = ( value , pattern ) => {
 
   // pattern = number | boolean | symbol 
   if( (typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean') ){
-    return pattern === pattern
+    return pattern === value
   }
 
   // pattern = object

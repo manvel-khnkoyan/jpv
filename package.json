@@ -1,6 +1,6 @@
 {
   "name": "jpv",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Json Pattern Validator",
   "main": "index.js",
   "scripts": {
