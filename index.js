@@ -149,7 +149,7 @@ var iterate  = (obj1, obj2, valid, cb ) => {
 }
 
 var standartValidate = (json, pattern) => {
-  return iterate(json, pattern, true, compareStandart ) // && iterate( pattern, json, true, compareExistance )
+  return iterate(json, pattern, true, compareStandart ) && iterate( pattern, json, true, compareExistance )
 }
 
 var strictValidate = (json, pattern) => {
