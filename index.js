@@ -99,8 +99,13 @@ var compareStrict = ( value , pattern ) => {
 }
 
 var compareExistance = ( obj1, obj2 ) => {
-  // when pattern is undefined
+  // when no object for pattern
   if( typeof obj2 === 'undefined'  ){
+    if( typeof obj1 === 'string' ){
+      if( (obj1.match( /^(\!)?\[(.*)\]\?$/i ) !== null) || (obj1.match( /^(\!)?\((.*)\)\?$/i ) !== null)  ){        
+        return true
+      }
+    }
     return false
   }
   return true
@@ -149,7 +154,7 @@ var iterate  = (obj1, obj2, valid, cb ) => {
 }
 
 var standartValidate = (json, pattern) => {
-  return iterate(json, pattern, true, compareStandart ) && iterate( pattern, json, true, compareExistance )
+  return iterate(json, pattern, true, compareStandart ) && iterate( pattern, json , true, compareExistance )
 }
 
 var strictValidate = (json, pattern) => {
