@@ -38,7 +38,7 @@ var pattern = {
   }
 }
 
-console.log( 'valid: ', jpv.validate(json, pattern )
+console.log( 'valid: ', jpv.validate(json, pattern ) )
 // --> "valid: true"
 
 ```
