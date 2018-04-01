@@ -47,7 +47,7 @@ console.log( 'valid: ', jpv.validate(json, pattern ) )
 
 ## Pattern Types
 
-There are 5 types : **Fixed**, **Native**, **Logical**, **Regex** and **Constructor** type.
+There are many ptternt types : **Fixed**, **Native**, **Logical**, **Regex**, **Static**, **FunctionalRegex**, **FunctionalFixed** and **Constructor** type.
 
 #### Fixed
 
@@ -169,6 +169,39 @@ Available Logical Types:
   // --> true
 ```
 
+####  Functional Regex Type {regex}
+
+```javascript
+
+  var json = {
+    key : 'A-8'
+  }
+  
+  var pattern = {
+    key : '{/[A-Z]-[0-9]/}'
+  }
+  
+  console.log( jpv.validate(json, pattern) ) 
+  // --> true
+```
+
+####  Functional Fixed Type {fixed_value}
+
+```javascript
+
+  var json = {
+    key : '7'
+  }
+
+  var pattern = {
+    key : '{7}'
+  }
+  
+  console.log( jpv.validate(json, pattern) ) 
+  // --> true
+```
+
+
 > before matching through regex, every type is converting to string. Boolean **true** becomes string **"true"**, null becomes string **"null"** and etc.
 
 
@@ -251,8 +284,8 @@ In standard mode "pattern" can miss properties or even can be empty, but in stri
 
 ## Not / Logical negation (!) / Operator
 
-Negations ("!") operator is used for only *Native* and *Logical* types.
- 
+Negations ("!") operator is used for only *Native*, *Logical* and *Functional Types* types.
+
 ```javascript
     
   // Example 1
@@ -274,13 +307,17 @@ Negations ("!") operator is used for only *Native* and *Logical* types.
   var json = {
     key1 : [2],
     key2 : "Yes",
-    key3 : [2,3]
+    key3 : [2,3],
+    key4 : "No",
+    key5 : "1"
   }
   
   var pattern = {
     key1 : '!(number)',
     key2 : '!(number)',
-    key3 : '![empty]'
+    key3 : '![empty]',
+    key4 : '!{/Yes/i}',
+    key5 : '!{2}'
   }
 
   // strict mode
@@ -341,6 +378,37 @@ Current operator ("!") is used for only with *Native* and *Logical* types.
 
 ```
 
+Another example with *Functional Type*
+
+
+```javascript
+    
+  var json1 = {
+
+  }
+  var json2 = {
+    key : '1'
+  }
+  var json3 = {
+    key : 'a'
+  }
+  
+  var pattern = {
+    key : '{/^[0-9]$/}?'
+  }
+  
+  console.log( jpv.validate(json1, pattern) )
+  // --> true
+  
+  console.log( jpv.validate(json2, pattern) )
+  // --> true
+  
+  console.log( jpv.validate(json3, pattern) )
+  // --> false
+
+```
+
+
 ## Multiple Validation 
 
 If need to validate multiple patterns, you have to use different patterns.
@@ -367,6 +435,7 @@ If need to validate multiple patterns, you have to use different patterns.
   // --> false
 
 ```
+
 
 ### Testing
 

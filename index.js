@@ -25,36 +25,56 @@ var compareCommon = ( value , pattern ) => {
     // Native Types 
     let nativeMatches = pattern.match(/^(\!)?\((.*)\)(\?)?$/i)
     if( nativeMatches !== null ){
-
       let match = (value === null ? nativeMatches[2] === 'null' : (typeof value === nativeMatches[2]) )
-      
       // Negation ? Operator
       if( typeof nativeMatches[3] !== 'undefined' ){
         if ( value === null || typeof value === 'undefined' || value === '' ){
           return true
         }
       }
-  
       return nativeMatches[1] === '!' ? !match : match
     }
   
     // Logical Types
     let logicalMatches = pattern.match(/^(\!)?\[(.*)\](\?)?$/i)
     if( logicalMatches !== null && (logicalMatches[2] in expressions) ){
-      
       let match = (String(value).match(expressions[logicalMatches[2]]) !== null)
-
       // Negation ? Operator
       if( typeof logicalMatches[3] !== 'undefined' ){
         if ( value === null || typeof value === 'undefined' || value === '' ){
           return true
         }
       }
-
       return logicalMatches[1] === '!' ? !match : match
     }
 
-    // Excact Type
+    // Functional Regex
+    let functionalRegexMatches = pattern.match(/^(\!)?\{\/(.*)\/([a-z]*)\}(\?)?$/i)
+    if( functionalRegexMatches !== null ){      
+      let match = (String(value).match(new RegExp(functionalRegexMatches[2],functionalRegexMatches[3])) !== null)
+      // Negation ? Operator
+      if( typeof functionalRegexMatches[4] !== 'undefined' ){
+        if ( value === null || typeof value === 'undefined' || value === '' ){
+          return true
+        }
+      }
+      return functionalRegexMatches[1] === '!' ? !match : match
+    }
+
+    // Functional Fixed
+    let functionalFixedMatches = pattern.match(/^(\!)?\{(.*)\}(\?)?$/i)    
+    if( functionalFixedMatches !== null ){
+      let match =  ( String(value) == String(functionalFixedMatches[2]))
+      // Negation ? Operator
+      if( typeof functionalFixedMatches[3] !== 'undefined' ){
+        if ( value === null || typeof value === 'undefined' || value === '' ){
+          return true
+        }
+      }
+      return functionalFixedMatches[1] === '!' ? !match : match
+    }
+
+    // Fixed Type
     return String(value) == String(pattern)
   }
 
@@ -102,7 +122,10 @@ var compareExistance = ( obj1, obj2 ) => {
   // when no object for pattern
   if( typeof obj2 === 'undefined'  ){
     if( typeof obj1 === 'string' ){
-      if( (obj1.match( /^(\!)?\[(.*)\]\?$/i ) !== null) || (obj1.match( /^(\!)?\((.*)\)\?$/i ) !== null)  ){        
+      if( (obj1.match( /^(\!)?\[(.*)\]\?$/i ) !== null) || 
+          (obj1.match( /^(\!)?\((.*)\)\?$/i ) !== null) ||
+          (obj1.match( /^(\!)?\{(\/.*\/[a-z]*)\}\?$/i ) !== null) ||
+          (obj1.match( /^(\!)?\{(.*)\}\?$/i ) !== null)  ){        
         return true
       }
     }
