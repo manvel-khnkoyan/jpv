@@ -8,7 +8,7 @@ Json Pattern Validator.
 
 ## Install
 
-Stable Release (`1.3.x`)
+Stable Release (`1.4.x`)
 
 ```sh
 $ npm install jpv --save
