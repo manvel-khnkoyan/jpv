@@ -8,7 +8,7 @@ Json Pattern Validator.
 
 ## Install
 
-Stable Release (`1.4.x`)
+Stable Release (`1.5.x`)
 
 ```sh
 $ npm install jpv --save
@@ -47,7 +47,7 @@ console.log( 'valid: ', jpv.validate(json, pattern ) )
 
 ## Pattern Types
 
-There are many ptternt types : **Fixed**, **Native**, **Logical**, **Regex**, **Static**, **FunctionalRegex**, **FunctionalFixed** and **Constructor** type.
+There are many pattern types : **Fixed**, **Native**, **Logical**, **Regex**, **Static**, **FunctionalRegex**, **FunctionalFixed** and **Constructor** type.
 
 #### Fixed
 
@@ -433,6 +433,12 @@ If need to validate multiple patterns, you have to use different patterns.
     jpv.validate(json, patterForValue)   // --> false
   ) 
   // --> false
+
+```
+
+### One Big Example
+
+```javascript
 
 ```
 
