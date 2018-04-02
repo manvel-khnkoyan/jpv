@@ -75,7 +75,7 @@ var compareCommon = ( value , pattern ) => {
     }
 
     // Fixed Type
-    return String(value) == String(pattern)
+    return value === pattern
   }
 
   // pattern = number | boolean | symbol 
@@ -165,15 +165,12 @@ var iterate  = (obj1, obj2, valid, cb ) => {
           continue;
         }
 
-
-
         for(let i = 0; i < obj1[property].length; i++  ){
           if( !(valid = iterate(obj1[property][i], obj2[property][0], valid, cb ) ) ){
             return false
           }
         }
 
-        
       }
 
       // iterate recursavely when object and json are objects / and when pattern has other keys
