@@ -45,7 +45,7 @@ console.log( jpv.validate(json, pattern ) )
 
 ## Pattern
 
-There are many pattern to use : **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Constructor**.
+There are many patterns to use : **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Constructor**.
 
 
 ### Fixed Pattern
@@ -63,7 +63,7 @@ There are many pattern to use : **Fixed**, **Native**, **Defined**, **Regex**, *
   }
 ```
 
-> "Fixed Pattern" requires to use identical type as well.
+> "Fixed Pattern" requires to use identical types.
 
 ```javascript
 
@@ -179,6 +179,8 @@ Available Defined Patterns:
 
 ###  Functional-Regex : {regex}
 
+> "Functional Patterns" is used to implement logical conditions, which is described below.
+
 ```javascript
 
   var json = {
@@ -210,14 +212,14 @@ Available Defined Patterns:
   // --> true
 ```
 
-> "Functional Patterns" is used to implement logical conditions, which is described below.
-
-> Values in Functional scopes **{}** is converting to string.
+> Values in Functional scopes **{}** is always converting to string.
 
 
 ### Constructor
 
-This pattern is helpful when in described pattern is used object, instead of a primitive type. For that special case comparison goes by object constructor.
+This pattern is helpful when described pattern is an object, instead of a primitive type. For this special case comparison goes by object constructor.
+
+Example: 1
 
 ```javascript
 
@@ -237,7 +239,7 @@ This pattern is helpful when in described pattern is used object, instead of a p
   // --> true
 ```
 
-another example:
+Example: 2
 
 ```javascript
    
@@ -365,6 +367,8 @@ This operator is used when given value can be empty or undefined. It works like 
 
 Current operator (**?**) is used together with *Native*, *Defined* and *Functional* patterns. 
  
+ Example 1:
+
 ```javascript
     
   var a = {
@@ -395,7 +399,7 @@ Current operator (**?**) is used together with *Native*, *Defined* and *Function
 
 ```
 
-Another example with *Functional Patterns*
+Example 2:
 
 ```javascript
     
@@ -425,8 +429,8 @@ Another example with *Functional Patterns*
 
 ### Arrays
 
-This special pattern is used to validate nested array elements. All you need is to create **one** nested pattern inside an array. 
-In this case, every object in array is being validated according the pattern described on first element of an array.
+This special pattern is used to validate nested arrays elements. All you need is to create **one** nested pattern inside an array. 
+In this case, every object in array is being validated according the pattern - described on first element of an array.
 
 ```javascript
     
