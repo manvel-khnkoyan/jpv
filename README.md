@@ -4,95 +4,96 @@ jpv
 
 Json Pattern Validator.
 
-***jpv***  - designed for validating json schemas.
+***jpv***  - is designed for validating json schemas.
+
 
 ## Install
 
-Stable Release (`1.4.x`)
+Stable Release (`1.5.x`)
 
 ```sh
 $ npm install jpv --save
 ```
 
-## Usage
+
+## Simple Usage
 
 ```javascript
 
-// import json pattern validator
 import jpv from 'jpv';
-// or
-// const jpv = require('jpv');
-
 
 var json = {
-  key1 : '98',
-  key2 : {
-      url : 'http://example.com'
+  status : 'OK',
+  data : {
+    url : 'http://example.com'
   }
 }
 
 var pattern = {
-  key1 : /[0-9]+/i,
-  key2 : {
+  status : /^OK$/,
+  data : {
     url : "[url]" 
   }
 }
 
-console.log( 'valid: ', jpv.validate(json, pattern ) )
-// --> "valid: true"
+console.log( jpv.validate(json, pattern ) )
 
 ```
 
 > validate() method returns boolean (true/false) 
 
-## Pattern Types
 
-There are many ptternt types : **Fixed**, **Native**, **Logical**, **Regex**, **Static**, **FunctionalRegex**, **FunctionalFixed** and **Constructor** type.
+## Pattern
 
-#### Fixed
+There are many pattern to use : **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Constructor**.
 
-*Fixed Type* designed for validate json by exact values 
+
+### Fixed Pattern
+
+*Fixed Pattern* is designed for validating json by exact values.
 
 ```javascript
   var pattern = {
-    key1 : 100,
-    key2 : {
-      key3 : {
+    id : 100,
+    data : {
+      item : {
         status : "OK"
       }
     }
   }
 ```
 
-> When is used fixed values, types must be identical as well.
+> "Fixed Pattern" requires to use identical type as well.
 
 ```javascript
 
   var json = {
-    key : 100
+    id : 100
   }
 
   // 1 pattern
   var pattern1 = {
-    key : 100
+    id : 100
   }
 
   // 2 pattern
   var pattern2 = {
-    key : "100"
+    id : "100"
   }
   
   console.log( jpv.validate(json, pattern1) ) 
   // --> true
-  
   console.log( jpv.validate(json, pattern2) ) 
-  // --> false, types are different  
+  // --> false
+
+  // because pattern type is a string not number
 
 ```
 
-#### Native Type ```(type)```
 
-*Native Type* is used for validate json through javascript native types : **boolean**,**null**,**undefined**,**number**,**string**,**symbol** and **object**.
+### Native Pattern : (type)
+
+*Native Pattern* is used to validating json object based on javascript native types : **boolean**,**null**,**undefined**,**number**,**string**,**symbol** and **object**.
 
  
 ```javascript
@@ -100,60 +101,66 @@ There are many ptternt types : **Fixed**, **Native**, **Logical**, **Regex**, **
   var json = {
     key1 : 98,
     key2 : false,
-    key3 : null
+    key3 : null,
+    key4 : { 
+      key5 : 1 
+    }
   }
   
   var pattern = {
     key1 : '(number)',
     key2 : '(boolean)',
-    key3 : '(null)'
+    key3 : '(null)',
+    key4 : '(object)'
   }
 
   console.log( jpv.validate(json, pattern) ) 
   // --> true
 ```
 
-#### Logical Type ```[type]```
 
-*Logical Type* is made to define most useful patterns such as a email, date and etc.
+### Defined Pattern : [defined_type]
+
+*Defined Pattern* is made to facilitate using most tedious patterns such as a email, date and etc.
  
 ```javascript
 
   var json = {
-    key1 : '2017-12-25',
-    key2 : 'user@gmail.com',
-    key3 : []
+    a : '2017-12-25',
+    b : 'user@gmail.com',
+    c : []
   }
   
   var pattern = {
-    key1 : '[date]',
-    key2 : '[email]',
-    key3 : '[empty]'
+    a : '[date]',
+    b : '[email]',
+    c : '[empty]'
   }
   
   console.log( jpv.validate(json, pattern) ) 
   // --> true
 ```
 
-Available Logical Types:
+Available Defined Patterns:
  
-| Logical Type  | Example                   |                   |
-| --------------|:-------------------------:|------------------:|
-| exist         |                           | is key exist      |
-| empty         |                           | empty string      |
-| boolean       | True                      | case-insensitive  | 
-| double        | 12.258028                 | --                |
-| naturalNumber | 2                         | 0 is not natural  |
-| number        | 0284                      | --                |
-| integer       | 1478                      | --                |
-| url           | https://fb.com            | --                |
-| alphaNumeric  | a7                        | --                |
-| email         | user@example.com          | --                |
-| date          | 2017-05-12                | --                |
-| datetime      | 2017-03-25 10:30:58.235   | --                |
+| Pattern              | Example                   |
+| ---------------------|:-------------------------:|
+| exist                |                           |
+| empty                | []                        |
+| boolean              | True                      |
+| double               | 12.258028                 |
+| naturalNumber        | 2                         |
+| number               | 0284                      |
+| integer              | 1478                      |
+| url                  | https://fb.com            |
+| alphaNumeric         | a7                        |
+| email                | user@example.com          |
+| date                 | 2017-05-12                |
+| datetime             | 2017-03-25 10:30:58.235   |
 
 
-#### Regular Expression
+
+### Regular Expression
 
 ```javascript
 
@@ -162,14 +169,15 @@ Available Logical Types:
   }
   
   var pattern = {
-    key : /[A-Z]-[0-9]/
+    key : /^[A-Z]-[0-9]$/
   }
   
   console.log( jpv.validate(json, pattern) ) 
   // --> true
 ```
 
-####  Functional Regex Type {regex}
+
+###  Functional-Regex : {regex}
 
 ```javascript
 
@@ -185,7 +193,8 @@ Available Logical Types:
   // --> true
 ```
 
-####  Functional Fixed Type {fixed_value}
+
+###  Functional-Fixed Pattern : {fixed_value}
 
 ```javascript
 
@@ -201,24 +210,27 @@ Available Logical Types:
   // --> true
 ```
 
+> "Functional Patterns" is used to implement logical conditions, which is described below.
 
-> before matching through regex, every type is converting to string. Boolean **true** becomes string **"true"**, null becomes string **"null"** and etc.
+> Values in Functional scopes **{}** is converting to string.
 
 
-#### Constructor
+### Constructor
 
-This type is useful to validate Arrays and Objects. When pattern key is an object instead of primitive types, then comparison goes by object contructor.
+This pattern is helpful when in described pattern is used object, instead of a primitive type. For that special case comparison goes by object constructor.
 
 ```javascript
 
   var json = {
-    key1 : [1,2,3],
-    key2 : { a : 'b' }
+    a : [ 1, 2, 3],
+    b : { 
+      c : '1' 
+    }
   }
   
   var pattern = {
-    key1 : [],
-    key2 : {}
+    a : [],
+    b : {}
   }
   
   console.log( jpv.validate(json, pattern) ) 
@@ -240,84 +252,89 @@ another example:
   console.log( jpv.validate(json, pattern) ) 
   // --> true
 
-  // because in pattern when is used object - compares constructors, not values 
+  // because comparison is going by constructors, but not by values
   // [1,2,3].constructor === [4].constructor
 
 ```
 
+
 ## Modes
 
-There are two ```standard``` and ```strict``` modes.
+There are two ```standard``` and ```strict``` modes. To use strict mode, need to add third boolean argument in validate function.
 
-In standard mode "pattern" can miss properties or even can be empty, but in strict mode validation object and pattern must have the same "key-value" hierarchy.
+In standard mode "pattern" can miss properties or can be empty, but in strict mode validation object and pattern must have the same "key-value" hierarchy.
  
 ```javascript
     
   var json = {
-    key1 : 5789,
-    key2 : "Another One"
+    a : 5789,
+    b : "Another One"
   }
 
-  var pattern = {
-    key1 : '[number]'
+  var pattern1 = {
+    a : '(number)'
   }
   
   // standard mode
-  console.log(  jpv.validate(json, pattern)  )        
+  console.log(  jpv.validate(json, pattern1)  )        
   // --> true
   
   // strict mode
-  console.log(  jpv.validate(json, pattern, true ) )  
+  console.log(  jpv.validate(json, pattern1, true ) )  
   // --> false  
-```
+  // missed b
 
-```javascript
-  var pattern = {
-    key1 : '[number]',
-    key2 : '[string]'
+  var pattern2 = {
+    a : '(number)',
+    b : '(string)'
   }
   
   // strict mode
-  console.log(  jpv.validate(json, pattern, true ) )  
+  console.log(  jpv.validate(json, pattern2, true ) )  
   // --> true 
+
 ```
 
-## Not / Logical negation (!) / Operator
 
-Negations ("!") operator is used for only *Native*, *Logical* and *Functional Types* types.
+## Logical negation (!) operator
+
+Negations ("!") operator is used for only *Native*, *Defined* and *Functional* patterns.
+
+Example 1:
 
 ```javascript
-    
-  // Example 1
+
   var json = {
-    key : 5789
+    a : 5789
   }
   
   var pattern = {
-    key : '!(number)'
+    a : '!(number)'
   }
   
   console.log( jpv.validate(json, pattern) )
   // --> false
+
 ```
 
+Example 2:
+
 ```javascript
-   
-  // Example 2
+
   var json = {
-    key1 : [2],
-    key2 : "Yes",
-    key3 : [2,3],
-    key4 : "No",
-    key5 : "1"
+    a : [2],
+    b : "Yes",
+    c : [2,3],
+    d : "No",
+    e : "1"
   }
   
   var pattern = {
-    key1 : '!(number)',
-    key2 : '!(number)',
-    key3 : '![empty]',
-    key4 : '!{/Yes/i}',
-    key5 : '!{2}'
+    a : '!(number)',
+    b : '!(number)',
+    c : '![empty]',
+    d : '!{/Yes/i}',
+    e : '!{2}'
   }
 
   // strict mode
@@ -325,9 +342,10 @@ Negations ("!") operator is used for only *Native*, *Logical* and *Functional Ty
   // --> true
 ```
 
+Example 3:
+
 ```javascript
 
-  // Example 3
   var json = {
     key : {}
   };
@@ -340,23 +358,25 @@ Negations ("!") operator is used for only *Native*, *Logical* and *Functional Ty
   // --> true
 ```
 
+
 ## Empty or Match (?) Operator
 
-This operator is used when given value is allowed to be empty as well. It works like a regex **?** operator.
+This operator is used when given value can be empty or undefined. It works like a regex **?** operator.
 
-Current operator ("!") is used for only with *Native* and *Logical* types. 
+Current operator (**?**) is used together with *Native*, *Defined* and *Functional* patterns. 
  
 ```javascript
     
-  var json1 = {
+  var a = {
+
   }
-  var json2 = {
+  var b = {
     key : 5
   }
-  var json3 = {
+  var c = {
     key : ""
   }
-  var json4 = {
+  var d = {
     key : "A"
   }
   
@@ -364,32 +384,28 @@ Current operator ("!") is used for only with *Native* and *Logical* types.
     key : '[number]?'
   }
   
-  console.log( jpv.validate(json1, pattern) )
+  console.log( jpv.validate(a, pattern) )
   // --> true
-  
-  console.log( jpv.validate(json2, pattern) )
+  console.log( jpv.validate(b, pattern) )
   // --> true
-  
-  console.log( jpv.validate(json3, pattern) )
+  console.log( jpv.validate(c, pattern) )
   // --> true
-  
-  console.log( jpv.validate(json4, pattern) )
+  console.log( jpv.validate(d, pattern) )
   // --> false
 
 ```
 
-Another example with *Functional Type*
-
+Another example with *Functional Patterns*
 
 ```javascript
     
-  var json1 = {
+  var a = {
 
   }
-  var json2 = {
+  var b = {
     key : '1'
   }
-  var json3 = {
+  var c = {
     key : 'a'
   }
   
@@ -397,42 +413,47 @@ Another example with *Functional Type*
     key : '{/^[0-9]$/}?'
   }
   
-  console.log( jpv.validate(json1, pattern) )
+  console.log( jpv.validate( a, pattern) )
+  // --> true  
+  console.log( jpv.validate( b, pattern) )
   // --> true
-  
-  console.log( jpv.validate(json2, pattern) )
-  // --> true
-  
-  console.log( jpv.validate(json3, pattern) )
+  console.log( jpv.validate( c, pattern) )
   // --> false
 
 ```
 
 
-## Multiple Validation 
+### Arrays
 
-If need to validate multiple patterns, you have to use different patterns.
- 
+This special pattern is used to validate nested array elements. All you need is to create **one** nested pattern inside an array. 
+In this case, every object in array is being validated according the pattern described on first element of an array.
+
 ```javascript
     
   var json = {
-    key : 5789
+    users : [
+      {
+        id : 1001478,
+        name : "Alisa"
+      },
+      {
+        id : 1003476,
+        name : "Bob"
+      },
+    ]
+  }
+
+  var pattern = {
+    users : [
+      {
+        id : '(number)',
+        name : '(string)'
+      }
+    ]
   }
   
-  var patternForTypes = {
-    key : '(number)'
-  }
-  
-  var patterForValue = {
-    key : /^[0-9]{3}$/
-  }
-  
-  console.log(  
-    jpv.validate(json, patternForTypes)  // --> true
-      && 
-    jpv.validate(json, patterForValue)   // --> false
-  ) 
-  // --> false
+  console.log( jpv.validate(json, pattern) )
+  // --> true
 
 ```
 
