@@ -4,8 +4,12 @@ jpv
 
 Json Pattern Validator.
 
-***jpv***  - is designed for validating json schemas.
+***jpv***  - is a easy use validator library, designed special for large and complex json schemes.
 
+
+There are dozen methods and functions could useful to validate any type of json.
+You can use static or native methods, or you can write your own regular expression for each field.
+JPV validator also works with Array and has clever functionalities like a "Logical negation".
 
 ## Install
 
@@ -32,7 +36,7 @@ var json = {
 var pattern = {
   status : /^OK$/,
   data : {
-    url : "[url]" 
+    url : "[url]"
   }
 }
 
@@ -40,7 +44,7 @@ console.log( jpv.validate(json, pattern ) )
 
 ```
 
-> validate() method returns boolean (true/false) 
+> validate() method returns boolean (true/false)
 
 
 ## Pattern
@@ -80,10 +84,10 @@ There are many patterns to use : **Fixed**, **Native**, **Defined**, **Regex**, 
   var pattern2 = {
     id : "100"
   }
-  
-  console.log( jpv.validate(json, pattern1) ) 
+
+  console.log( jpv.validate(json, pattern1) )
   // --> true
-  console.log( jpv.validate(json, pattern2) ) 
+  console.log( jpv.validate(json, pattern2) )
   // --> false
 
   // because pattern type is a string not number
@@ -95,18 +99,18 @@ There are many patterns to use : **Fixed**, **Native**, **Defined**, **Regex**, 
 
 *Native Pattern* is used to validating json object based on javascript native types : **boolean**,**null**,**undefined**,**number**,**string**,**symbol** and **object**.
 
- 
+
 ```javascript
 
   var json = {
     key1 : 98,
     key2 : false,
     key3 : null,
-    key4 : { 
-      key5 : 1 
+    key4 : {
+      key5 : 1
     }
   }
-  
+
   var pattern = {
     key1 : '(number)',
     key2 : '(boolean)',
@@ -114,7 +118,7 @@ There are many patterns to use : **Fixed**, **Native**, **Defined**, **Regex**, 
     key4 : '(object)'
   }
 
-  console.log( jpv.validate(json, pattern) ) 
+  console.log( jpv.validate(json, pattern) )
   // --> true
 ```
 
@@ -122,7 +126,7 @@ There are many patterns to use : **Fixed**, **Native**, **Defined**, **Regex**, 
 ### Defined Pattern : [defined_type]
 
 *Defined Pattern* is made to facilitate using most tedious patterns such as a email, date and etc.
- 
+
 ```javascript
 
   var json = {
@@ -130,19 +134,19 @@ There are many patterns to use : **Fixed**, **Native**, **Defined**, **Regex**, 
     b : 'user@gmail.com',
     c : []
   }
-  
+
   var pattern = {
     a : '[date]',
     b : '[email]',
     c : '[empty]'
   }
-  
-  console.log( jpv.validate(json, pattern) ) 
+
+  console.log( jpv.validate(json, pattern) )
   // --> true
 ```
 
 Available Defined Patterns:
- 
+
 | Pattern              | Example                   |
 | ---------------------|:-------------------------:|
 | exist                |                           |
@@ -167,12 +171,12 @@ Available Defined Patterns:
   var json = {
     key : 'A-8'
   }
-  
+
   var pattern = {
     key : /^[A-Z]-[0-9]$/
   }
-  
-  console.log( jpv.validate(json, pattern) ) 
+
+  console.log( jpv.validate(json, pattern) )
   // --> true
 ```
 
@@ -186,12 +190,12 @@ Available Defined Patterns:
   var json = {
     key : 'A-8'
   }
-  
+
   var pattern = {
     key : '{/[A-Z]-[0-9]/}'
   }
-  
-  console.log( jpv.validate(json, pattern) ) 
+
+  console.log( jpv.validate(json, pattern) )
   // --> true
 ```
 
@@ -207,8 +211,8 @@ Available Defined Patterns:
   var pattern = {
     key : '{7}'
   }
-  
-  console.log( jpv.validate(json, pattern) ) 
+
+  console.log( jpv.validate(json, pattern) )
   // --> true
 ```
 
@@ -225,24 +229,24 @@ Example: 1
 
   var json = {
     a : [ 1, 2, 3],
-    b : { 
-      c : '1' 
+    b : {
+      c : '1'
     }
   }
-  
+
   var pattern = {
     a : [],
     b : {}
   }
-  
-  console.log( jpv.validate(json, pattern) ) 
+
+  console.log( jpv.validate(json, pattern) )
   // --> true
 ```
 
 Example: 2
 
 ```javascript
-   
+
   var json = {
     key : [1,2,3]
   }
@@ -250,8 +254,8 @@ Example: 2
   var pattern = {
     key : [4]
   }
-  
-  console.log( jpv.validate(json, pattern) ) 
+
+  console.log( jpv.validate(json, pattern) )
   // --> true
 
   // because comparison is going by constructors, but not by values
@@ -265,9 +269,9 @@ Example: 2
 There are two ```standard``` and ```strict``` modes. To use strict mode, need to add third boolean argument in validate function.
 
 In standard mode "pattern" can miss properties or can be empty, but in strict mode validation object and pattern must have the same "key-value" hierarchy.
- 
+
 ```javascript
-    
+
   var json = {
     a : 5789,
     b : "Another One"
@@ -276,24 +280,24 @@ In standard mode "pattern" can miss properties or can be empty, but in strict mo
   var pattern1 = {
     a : '(number)'
   }
-  
+
   // standard mode
-  console.log(  jpv.validate(json, pattern1)  )        
+  console.log(  jpv.validate(json, pattern1)  )
   // --> true
-  
+
   // strict mode
-  console.log(  jpv.validate(json, pattern1, true ) )  
-  // --> false  
+  console.log(  jpv.validate(json, pattern1, { mode : "strict" } ) )
+  // --> false
   // missed b
 
   var pattern2 = {
     a : '(number)',
     b : '(string)'
   }
-  
+
   // strict mode
-  console.log(  jpv.validate(json, pattern2, true ) )  
-  // --> true 
+  console.log(  jpv.validate(json, pattern2, { mode : "strict" } ) )
+  // --> true
 
 ```
 
@@ -309,11 +313,11 @@ Example 1:
   var json = {
     a : 5789
   }
-  
+
   var pattern = {
     a : '!(number)'
   }
-  
+
   console.log( jpv.validate(json, pattern) )
   // --> false
 
@@ -330,7 +334,7 @@ Example 2:
     d : "No",
     e : "1"
   }
-  
+
   var pattern = {
     a : '!(number)',
     b : '!(number)',
@@ -340,7 +344,7 @@ Example 2:
   }
 
   // strict mode
-  console.log(  jpv.validate(json, pattern) )
+  console.log(  jpv.validate(json, pattern, { mode : "strict" }) )
   // --> true
 ```
 
@@ -351,11 +355,11 @@ Example 3:
   var json = {
     key : {}
   };
-  
+
   var pattern = {
     key : '![number]'
   };
-  
+
   console.log(  jpv.validate(json, pattern)  )
   // --> true
 ```
@@ -365,12 +369,12 @@ Example 3:
 
 This operator is used when given value can be empty or undefined. It works like a regex **?** operator.
 
-Current operator (**?**) is used together with *Native*, *Defined* and *Functional* patterns. 
- 
+Current operator (**?**) is used together with *Native*, *Defined* and *Functional* patterns.
+
  Example 1:
 
 ```javascript
-    
+
   var a = {
 
   }
@@ -383,11 +387,11 @@ Current operator (**?**) is used together with *Native*, *Defined* and *Function
   var d = {
     key : "A"
   }
-  
+
   var pattern = {
     key : '[number]?'
   }
-  
+
   console.log( jpv.validate(a, pattern) )
   // --> true
   console.log( jpv.validate(b, pattern) )
@@ -402,7 +406,7 @@ Current operator (**?**) is used together with *Native*, *Defined* and *Function
 Example 2:
 
 ```javascript
-    
+
   var a = {
 
   }
@@ -412,13 +416,13 @@ Example 2:
   var c = {
     key : 'a'
   }
-  
+
   var pattern = {
     key : '{/^[0-9]$/}?'
   }
-  
+
   console.log( jpv.validate( a, pattern) )
-  // --> true  
+  // --> true
   console.log( jpv.validate( b, pattern) )
   // --> true
   console.log( jpv.validate( c, pattern) )
@@ -429,11 +433,11 @@ Example 2:
 
 ### Arrays
 
-This special pattern is used to validate nested arrays elements. All you need is to create **one** nested pattern inside an array. 
+This special pattern is used to validate nested arrays elements. All you need is to create **one** nested pattern inside an array.
 In this case, every object in array is being validated according the pattern - described on first element of an array.
 
 ```javascript
-    
+
   var json = {
     users : [
       {
@@ -455,9 +459,29 @@ In this case, every object in array is being validated according the pattern - d
       }
     ]
   }
-  
+
   console.log( jpv.validate(json, pattern) )
   // --> true
+
+```
+
+
+### Debug
+
+jpv.validate function returns only boolean, this function tells us is json valid or not.
+But if you debug your input json, you can turn on debug mode, to see errors in your console.
+
+```
+
+var json = "Yes";
+var pattern = "[number]";
+
+// debug mode
+console.log( jpv.validate(json, pattern, {debug : true}) )
+
+// output :
+// The value of ["OK"] does not match with ["[number]"]
+// --> false
 
 ```
 
