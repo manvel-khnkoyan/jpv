@@ -469,7 +469,7 @@ In this case, every object in array is being validated according the pattern - d
 ### Debug
 
 jpv.validate function returns only boolean, this function tells us is json valid or not.
-But if you debug your input json, you can turn on debug mode, to see errors in your console.
+But if you want to debug - you can turn on debug mode ({debug : true}), to see errors in your console.
 
 ```
 
