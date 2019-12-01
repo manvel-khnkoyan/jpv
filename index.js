@@ -4,41 +4,42 @@
  * MIT Licensed
  */
 
-'use strict'
+'use strict';
 
 /*
  * Static Types created by Regular Expression
  */
 const expressions = require('./expressions.js');
 
-/*
-* is debug mode
-* */
-let debug = false;
-
-/*
-* log errors
-* */
-const log = (text) => {
-    if(debug){
-        console.log(text);
+const push = (options, property, constructor) => {
+    if (!options.debug) return 0;
+    const level = options.deepLog.length;
+    if (constructor === Array) {
+        options.deepLog.push(`${'--'.repeat(level + 1)} [ ${property} : `);
+    } else {
+        options.deepLog.push(`${'--'.repeat(level + 1)} { "${property}" : `);
     }
+    return level;
 };
 
+const pull = (options, level) => {
+    if (!options.debug) return;
+    options.deepLog = options.deepLog.slice(0, level);
+};
 
 /**
  * Common comparison function
- * @param {mixed} value
- * @param {mixed} pattern
+ * @param value
+ * @param pattern
+ * @param options
  */
-const compareCommon = (value, pattern) => {
-
+const compareCommon = (value, pattern, options) => {
     /*
    * Special for debugging
    * */
     let res = (result) => {
-        if(!result){
-            log("The value of ["+JSON.stringify(value)+"] does not match with ["+JSON.stringify(pattern)+"]")
+        if (!result && options.debug) {
+            options.logger(`The value of \n${options.deepLog.join('\n')}${value}\nnot matched with: /${JSON.stringify(pattern)}/`);
         }
         return result;
     };
@@ -53,7 +54,7 @@ const compareCommon = (value, pattern) => {
     // pattern = string
     if ((typeof pattern === 'string')) {
         // Native Types
-        let nativeMatches = pattern.match(/^(\!)?\((.*)\)(\?)?$/i);
+        let nativeMatches = pattern.match(/^(!)?\((.*)\)(\?)?$/i);
         if (nativeMatches !== null) {
             let match = (value === null ? nativeMatches[2] === 'null' : (typeof value === nativeMatches[2]));
             // Negation ? Operator
@@ -62,70 +63,72 @@ const compareCommon = (value, pattern) => {
                     return true;
                 }
             }
-            return res(nativeMatches[1] === '!' ? !match : match)
+            return res(nativeMatches[1] === '!' ? !match : match);
         }
 
         // Logical Types
-        let logicalMatches = pattern.match(/^(\!)?\[(.*)\](\?)?$/i);
+        let logicalMatches = pattern.match(/^(!)?\[(.*)\](\?)?$/i);
         if (logicalMatches !== null && (logicalMatches[2] in expressions)) {
             let match = (String(value).match(expressions[logicalMatches[2]]) !== null);
             // Negation ? Operator
             if (typeof logicalMatches[3] !== 'undefined') {
                 if (value === null || typeof value === 'undefined' || value === '') {
-                    return true
+                    return true;
                 }
             }
-            return res(logicalMatches[1] === '!' ? !match : match)
+            return res(logicalMatches[1] === '!' ? !match : match);
         }
 
         // Functional Regex
-        let functionalRegexMatches = pattern.match(/^(\!)?\{\/(.*)\/([a-z]*)\}(\?)?$/i);
+        let functionalRegexMatches = pattern.match(/^(!)?\{\/(.*)\/([a-z]*)\}(\?)?$/i);
         if (functionalRegexMatches !== null) {
             let match = (String(value).match(new RegExp(functionalRegexMatches[2], functionalRegexMatches[3])) !== null);
             // Negation ? Operator
             if (typeof functionalRegexMatches[4] !== 'undefined') {
                 if (value === null || typeof value === 'undefined' || value === '') {
-                    return true
+                    return true;
                 }
             }
-            return res(functionalRegexMatches[1] === '!' ? !match : match)
+            return res(functionalRegexMatches[1] === '!' ? !match : match);
         }
 
         // Functional Fixed
-        let functionalFixedMatches = pattern.match(/^(\!)?\{(.*)\}(\?)?$/i);
+        let functionalFixedMatches = pattern.match(/^(!)?\{(.*)\}(\?)?$/i);
         if (functionalFixedMatches !== null) {
             let match = (String(value) === String(functionalFixedMatches[2]));
             // Negation ? Operator
             if (typeof functionalFixedMatches[3] !== 'undefined') {
                 if (value === null || typeof value === 'undefined' || value === '') {
-                    return true
+                    return true;
                 }
             }
-            return res(functionalFixedMatches[1] === '!' ? !match : match)
+            return res(functionalFixedMatches[1] === '!' ? !match : match);
         }
 
         // Fixed Type
-        return res(value === pattern)
+        return res(value === pattern);
     }
 
-    // pattern = number | boolean | symbol
-    if ((typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean')) {
-        return res(pattern === value)
+    // pattern = number | boolean | symbol | bigint
+    if ((typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean') ||
+        (typeof pattern === 'bigint') || (typeof pattern === 'null') || (typeof pattern === 'undefined')) {
+        return res(pattern === value);
     }
 
     // pattern = object
     if (typeof pattern === 'object') {
-        if (typeof pattern !== typeof value) {
-            return res(false)
-        }
         if (pattern !== null && value !== null) {
-            return res(value.constructor.name === pattern.constructor.name)
+            return res(value.constructor === pattern.constructor);
         }
-        return res(value === pattern)
+        return res(value === pattern);
     }
 
-    throw 'error: don`t use ' + (typeof pattern) + ' as a pattern value, insted of it use string format'
+    // pattern = object
+    if (typeof pattern === 'function') {
+        return res(value.constructor === pattern);
+    }
 
+    throw new Error('invalid data type');
 };
 
 /**
@@ -133,13 +136,16 @@ const compareCommon = (value, pattern) => {
  * When given value may not contain pattern
  * @param value
  * @param pattern
+ * @param options
  */
-var compareStandard = (value, pattern) => {
-    // when pattern is undefined
+var compareStandard = (value, pattern, options) => {
+    /*
+    * when pattern is undefined
+    * */
     if (typeof pattern === 'undefined') {
-        return true
+        return true;
     }
-    return compareCommon(value, pattern)
+    return compareCommon(value, pattern, options);
 };
 
 /**
@@ -147,14 +153,17 @@ var compareStandard = (value, pattern) => {
  * When given value must be exactly alike pattern
  * @param value
  * @param pattern
+ * @param options
  */
-var compareStrict = (value, pattern) => {
-    // when pattern is undefined
+var compareStrict = (value, pattern, options) => {
+    /*
+    * when pattern is undefined
+    * */
     if (typeof pattern === 'undefined') {
-        log("The value of ["+JSON.stringify(value)+"] does not match with ["+JSON.stringify(pattern)+"]");
-        return false
+        options.logger(`The value of \n${options.deepLog.join('\n')}${value}\nnot matched with: /${JSON.stringify(pattern)}/`);
+        return false;
     }
-    return compareCommon(value, pattern)
+    return compareCommon(value, pattern, options);
 };
 
 /**
@@ -162,105 +171,139 @@ var compareStrict = (value, pattern) => {
  * When given value must be exactly alike pattern
  * @param obj1
  * @param obj2
+ * @param options
  */
-var compareExistence = (obj1, obj2) => {
+var compareExistence = (obj1, obj2, options) => {
     // when no object for pattern
     if (typeof obj2 === 'undefined') {
         if (typeof obj1 === 'string') {
-            if ((obj1.match(/^(\!)?\[(.*)\]\?$/i) !== null) ||
-                (obj1.match(/^(\!)?\((.*)\)\?$/i) !== null) ||
-                (obj1.match(/^(\!)?\{(\/.*\/[a-z]*)\}\?$/i) !== null) ||
-                (obj1.match(/^(\!)?\{(.*)\}\?$/i) !== null)) {
-                return true
+            /*
+            * Checking empty or match operator "?"
+            * */
+            if ((obj1.match(/^(!)?\[(.*)\]\?$/i) !== null) ||
+                (obj1.match(/^(!)?\((.*)\)\?$/i) !== null) ||
+                (obj1.match(/^(!)?\{(\/.*\/[a-z]*)\}\?$/i) !== null) ||
+                (obj1.match(/^(!)?\{(.*)\}\?$/i) !== null)) {
+                return true;
             }
         }
-        log("No corresponding value for ["+JSON.stringify(obj1) +"]");
-        return false
+        options.logger(`Missing corresponding value: \n${options.deepLog.join('\n')}`);
+        return false;
     }
-    return true
+    return true;
 };
-
 
 /**
  * Iteration through each value
- * @param obj1
- * @param obj2
+ * @param value
+ * @param pattern
  * @param {boolean} valid
  * @param {function} cb
+ * @param options
  */
-var iterate = (obj1, obj2, valid, cb) => {
+var iterate = (value, pattern, valid, cb, options) => {
     /*
     * Already not valid
     * */
     if (!valid) return false;
 
     /*
-    * Is Pattern(obj2) Primitive type
-    * */
-    if( obj2 !== Object(obj2) ){
-        return valid = cb(obj1, obj2);
+    * When pattern(pattern) is primitive type
+    */
+    if (pattern !== Object(pattern)) {
+        return (valid = cb(value, pattern, options));
     }
 
     /*
-    * Iterate through obj1
-    * */
-    for (var property in obj1) {
-        if (obj1.hasOwnProperty(property)) {
-            // case with null or undefined
-            if (obj1[property] === null || obj2[property] === null || typeof obj1[property] === 'undefined' || typeof obj2[property] === 'undefined') {
-                if (!(valid = cb(obj1[property], obj2[property]))) {
-                    return false
-                }
-            }
-            // iterate if pattern is a array
-            else if ((obj2[property].constructor === Array) && (obj2[property].length > 0)) {
-                if (obj1[property].constructor !== Array) {
-                    if (!(valid = cb(obj1[property], obj2[property]))) {
-                        return false;
-                    }
-                    continue;
-                }
-                for (let i = 0; i < obj1[property].length; i++) {
-                    if (!(valid = iterate(obj1[property][i], obj2[property][0], valid, cb))) {
-                        return false
-                    }
-                }
-            }
-
-            // iterate recursavely when object and json are objects / and when pattern has other keys
-            else if ((obj1[property].constructor === Object) && (obj2[property].constructor === Object) && (Object.keys(obj2[property]).length !== 0)) {
-                if (!(valid = iterate(obj1[property], obj2[property], valid, cb))) {
-                    return false
-                }
-            }
-            //
-            else {
-                if (!(valid = cb(obj1[property], obj2[property]))) {
-                    return false
-                }
-            }
-        }
+    * When pattern is not either an Array is not a primitive object
+    */
+    if (typeof pattern === 'function' && pattern !== Object && pattern !== Array) {
+        return (valid = cb(value, pattern, options));
     }
 
-    return valid
+    /*
+    * Iterate through value
+    * */
+    for (const property in value) {
+        if (value.hasOwnProperty(property)) {
+            const level = push(options, property, value.constructor);
+            (() => {
+                /*
+                * When missing pattern
+                * */
+                if (!pattern.hasOwnProperty(property)) {
+                    return (valid = cb(value[property], undefined, options));
+                }
+
+                if (value[property] === null || pattern[property] === null ||
+                    typeof value[property] === 'undefined' || typeof pattern[property] === 'undefined') {
+                    return (valid = cb(value[property], pattern[property], options));
+                }
+
+                /*
+                * iterate if pattern is an Array
+                * */
+                if ((pattern[property].constructor === Array) && (pattern[property].length > 0)) {
+                    if (value[property].constructor !== Array) {
+                        return (valid = cb(value[property], pattern[property], options));
+                    }
+                    for (let i = 0; i < value[property].length; i++) {
+                        const levelArray = push(options, i, Array);
+                        valid = iterate(value[property][i], pattern[property][0], valid, cb, options);
+                        pull(options, levelArray);
+                        if (!valid) break;
+                    }
+
+                    return valid;
+                }
+
+                /*
+                * iterate recursively when pattern and json are objects
+                * and when pattern has other keys
+                * */
+                if ((typeof value[property] === 'object') &&
+                    (typeof pattern[property] === 'object') &&
+                    (Object.keys(pattern[property]).length !== 0)) {
+                    return (valid = iterate(value[property], pattern[property], valid, cb, options));
+                }
+
+                return (valid = cb(value[property], pattern[property], options));
+            })();
+            pull(options, level);
+        }
+    }
+    return valid;
 };
 
 /**
  * Standard validate
  * @param json
  * @param pattern
+ * @param options
  */
-var standardValidate = (json, pattern) => {
-    return iterate(json, pattern, true, compareStandard) && iterate(pattern, json, true, compareExistence)
+var standardValidate = (json, pattern, options) => {
+    /*
+    * 1) Iterate and compare existence of pattern
+    * 2) Iterate and compare standard of pattern
+    * */
+    return iterate(pattern, json, true, compareExistence, options) &&
+        iterate(json, pattern, true, compareStandard, options);
 };
 
 /**
  * Strict Validate
  * @param json
  * @param pattern
+ * @param options
  */
-var strictValidate = (json, pattern) => {
-    return iterate(json, pattern, true, compareStrict) && iterate(pattern, json, true, compareExistence)
+var strictValidate = (json, pattern, options) => {
+    /*
+    * 1) Iterate and compare existence of pattern
+    * 2) Iterate and compare strict of pattern
+    * */
+    return iterate(pattern, json, true, compareExistence, options) &&
+        iterate(json, pattern, true, compareExistence, options) &&
+        iterate(json, pattern, true, compareStrict, options);
 };
 
 module.exports = {
@@ -268,22 +311,18 @@ module.exports = {
      * Main Function
      * @param json
      * @param pattern
-     * @param option // for an older version it could be boolean
+     * @param opt // for an older version it could be boolean
      */
-    validate: (json, pattern, option) => {
-        // when strict is set
-        if (option !== null) {
-            if( (typeof option === 'boolean') && option ){
-                // log("Please use validate:(json, pattern, {mode:\"strict\"}) representation for a strict mode");
-                return strictValidate(json, pattern, true);
-            }
-            if( typeof option === 'object' ){
-                debug = !!option.debug;
-                if( "strict" === option.mode ){
-                    return strictValidate(json, pattern, true);
-                }
-            }
+    validate: (json, pattern, opt) => {
+        const options = (typeof opt === 'object' && Object.create(opt)) || {};
+        options.strict = (options.mode === 'strict') || ((typeof opt === 'boolean') && opt) || false;
+        options.debug = options.debug || false;
+        options.logger = options.logger || console.log;
+        options.deepLog = [];
+
+        if (options.strict) {
+            return strictValidate(json, pattern, options);
         }
-        return standardValidate(json, pattern)
+        return standardValidate(json, pattern, options);
     }
 };
