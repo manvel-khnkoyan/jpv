@@ -50,7 +50,7 @@ console.log( jpv.validate(json, pattern ) )
 ## Patterns
 
 
-JPV allows you to validate the JSON object associated with some patterns: **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Short-Objects**.  
+JPV allows you to validate the JSON object associated with some patterns: **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Short-Objects**.
 
 
 **Fixed Pattern** is the simplest template used to validate JSON against given exact values.
@@ -65,7 +65,7 @@ JPV allows you to validate the JSON object associated with some patterns: **Fixe
     }
   }
 ```
-  
+
 "Fixed Pattern" requires to use identical types.
 
 ```javascript
@@ -148,8 +148,10 @@ Right now available defined patterns are:
 | datetime             | 2017-03-25 10:30:58.235   |
 
 
+  
 
-**Regular Expression** - make your own regular expression 
+
+**Regular Expression** - make your own regular expression
 
 ```javascript
   var json = {
@@ -204,9 +206,9 @@ Example:
 
 ## Modes
 
-There are two ```standard``` and ```strict``` modes. 
+There are two ```standard``` and ```strict``` modes.
 
-```strict``` mode is used when your pattern and given JSON should contain exact fields, 
+```strict``` mode is used when your pattern and given JSON should contain exact fields,
 while in ```standard``` mode JSON can contain more fields than described in the pattern.
 
 By default JPV validator used standard mode. To set up strict mode - need add 3th parameter into the ```jpv.validate``` function:
@@ -251,9 +253,9 @@ Example using strict and standard modes
 
 ## Logical negation (!) operator
 
-Negations ("!") operator allows to negate is the pattern. 
+Negations ("!") operator allows to negate is the pattern.
 This can be useful when you need to deny a pattern:
- 
+
 Example 1:
 
 ```javascript
@@ -310,7 +312,7 @@ Example 3:
 
 ## Empty or Match (?) Operator
 
-Sometimes it is necessary to compare a template only for a given field. Foe such a cases can be used **Empty or Match** operator.  
+Sometimes it is necessary to compare a template only for a given field. Foe such a cases can be used **Empty or Match** operator.
 Just need to add **?** symbol in the end  of the expression (like we do for regular expression)
 
 ```javascript
@@ -336,7 +338,7 @@ Just need to add **?** symbol in the end  of the expression (like we do for regu
     key : "A"
   }
 
-  // 
+  //
   var pattern = {
     key : '[number]?'
   }
@@ -415,7 +417,7 @@ jpv.validate(json, pattern, {debug : true})
 
 // the output will be >
 
-//# The value of 
+//# The value of
 //# -- { "index" : Yes
 //# not matched with: /"[number]"/
 ```

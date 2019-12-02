@@ -160,7 +160,9 @@ var compareStrict = (value, pattern, options) => {
     * when pattern is undefined
     * */
     if (typeof pattern === 'undefined') {
-        options.logger(`The value of \n${options.deepLog.join('\n')}${value}\nnot matched with: /${JSON.stringify(pattern)}/`);
+        if (options.debug) {
+            options.logger(`The value of \n${options.deepLog.join('\n')}${value}\nnot matched with: /${JSON.stringify(pattern)}/`);
+        }
         return false;
     }
     return compareCommon(value, pattern, options);
@@ -187,7 +189,9 @@ var compareExistence = (obj1, obj2, options) => {
                 return true;
             }
         }
-        options.logger(`Missing corresponding value: \n${options.deepLog.join('\n')}`);
+        if (options.debug) {
+            options.logger(`Missing corresponding value: \n${options.deepLog.join('\n')}`);
+        }
         return false;
     }
     return true;
@@ -227,7 +231,7 @@ var iterate = (value, pattern, valid, cb, options) => {
     for (const property in value) {
         if (value.hasOwnProperty(property)) {
             const level = push(options, property, value.constructor);
-            (() => {
+            valid = (() => {
                 /*
                 * When missing pattern
                 * */
@@ -270,6 +274,7 @@ var iterate = (value, pattern, valid, cb, options) => {
                 return (valid = cb(value[property], pattern[property], options));
             })();
             pull(options, level);
+            if (!valid) return false;
         }
     }
     return valid;
@@ -286,8 +291,9 @@ var standardValidate = (json, pattern, options) => {
     * 1) Iterate and compare existence of pattern
     * 2) Iterate and compare standard of pattern
     * */
-    return iterate(pattern, json, true, compareExistence, options) &&
-        iterate(json, pattern, true, compareStandard, options);
+    if (!iterate(pattern, json, true, compareExistence, options)) return false;
+    if (!iterate(json, pattern, true, compareStandard, options)) return false;
+    return true;
 };
 
 /**
@@ -301,9 +307,10 @@ var strictValidate = (json, pattern, options) => {
     * 1) Iterate and compare existence of pattern
     * 2) Iterate and compare strict of pattern
     * */
-    return iterate(pattern, json, true, compareExistence, options) &&
-        iterate(json, pattern, true, compareExistence, options) &&
-        iterate(json, pattern, true, compareStrict, options);
+    if (!iterate(pattern, json, true, compareExistence, options)) return false;
+    if (!iterate(json, pattern, true, compareExistence, options)) return false;
+    if (!iterate(json, pattern, true, compareStrict, options)) return false;
+    return true;
 };
 
 module.exports = {
