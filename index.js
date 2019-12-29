@@ -15,9 +15,9 @@ const push = (options, property, constructor) => {
     if (!options.debug) return 0;
     const level = options.deepLog.length;
     if (constructor === Array) {
-        options.deepLog.push(`${'--'.repeat(level + 1)} [ ${property} : `);
+        options.deepLog.push(`[${property}]`);
     } else {
-        options.deepLog.push(`${'--'.repeat(level + 1)} { "${property}" : `);
+        options.deepLog.push(`"${property}"`);
     }
     return level;
 };
@@ -39,7 +39,7 @@ const compareCommon = (value, pattern, options) => {
    * */
     let res = (result) => {
         if (!result && options.debug) {
-            options.logger(`The value of \n${options.deepLog.join('\n')}${value}\nnot matched with: /${JSON.stringify(pattern)}/`);
+            options.logger(`error - the value of: {${options.deepLog.join('.')} = ${value}} not matched with: ${JSON.stringify(pattern)}`);
         }
         return result;
     };
@@ -110,8 +110,8 @@ const compareCommon = (value, pattern, options) => {
     }
 
     // pattern = number | boolean | symbol | bigint
-    if ((typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean') ||
-        (typeof pattern === 'bigint') || (typeof pattern === 'null') || (typeof pattern === 'undefined')) {
+    if ((pattern === null) || (typeof pattern === 'number') || (typeof pattern === 'symbol') ||
+        (typeof pattern === 'boolean') || (typeof pattern === 'bigint') || (typeof pattern === 'undefined')) {
         return res(pattern === value);
     }
 
@@ -138,7 +138,7 @@ const compareCommon = (value, pattern, options) => {
  * @param pattern
  * @param options
  */
-var compareStandard = (value, pattern, options) => {
+const compareStandard = (value, pattern, options) => {
     /*
     * when pattern is undefined
     * */
@@ -155,13 +155,13 @@ var compareStandard = (value, pattern, options) => {
  * @param pattern
  * @param options
  */
-var compareStrict = (value, pattern, options) => {
+const compareStrict = (value, pattern, options) => {
     /*
     * when pattern is undefined
     * */
     if (typeof pattern === 'undefined') {
         if (options.debug) {
-            options.logger(`The value of \n${options.deepLog.join('\n')}${value}\nnot matched with: /${JSON.stringify(pattern)}/`);
+            options.logger(`error - the value of: {${options.deepLog.join('.')} = ${value}} not matched with: ${JSON.stringify(pattern)}`);
         }
         return false;
     }
@@ -175,7 +175,7 @@ var compareStrict = (value, pattern, options) => {
  * @param obj2
  * @param options
  */
-var compareExistence = (obj1, obj2, options) => {
+const compareExistence = (obj1, obj2, options) => {
     // when no object for pattern
     if (typeof obj2 === 'undefined') {
         if (typeof obj1 === 'string') {
@@ -190,7 +190,7 @@ var compareExistence = (obj1, obj2, options) => {
             }
         }
         if (options.debug) {
-            options.logger(`Missing corresponding value: \n${options.deepLog.join('\n')}`);
+            options.logger(`error - missing corresponding value for: {${options.deepLog.join('.')}}`);
         }
         return false;
     }
@@ -205,7 +205,7 @@ var compareExistence = (obj1, obj2, options) => {
  * @param {function} cb
  * @param options
  */
-var iterate = (value, pattern, valid, cb, options) => {
+const iterate = (value, pattern, valid, cb, options) => {
     /*
     * Already not valid
     * */
@@ -286,7 +286,7 @@ var iterate = (value, pattern, valid, cb, options) => {
  * @param pattern
  * @param options
  */
-var standardValidate = (json, pattern, options) => {
+const standardValidate = (json, pattern, options) => {
     /*
     * 1) Iterate and compare existence of pattern
     * 2) Iterate and compare standard of pattern
@@ -302,7 +302,7 @@ var standardValidate = (json, pattern, options) => {
  * @param pattern
  * @param options
  */
-var strictValidate = (json, pattern, options) => {
+const strictValidate = (json, pattern, options) => {
     /*
     * 1) Iterate and compare existence of pattern
     * 2) Iterate and compare strict of pattern

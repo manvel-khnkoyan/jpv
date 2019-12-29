@@ -4,12 +4,12 @@ jpv
 
 Json Pattern Validator.
 
-***jpv***  - is an easy-to-use validator library designed specifically for large and complex JSON schemes.
+***jpv***  - is an easy-to-use JSON schema validator library designed for large and complex data.
 
 
-In the library you can find a dozen methods and functions that can be useful for checking any type of json.
-There are many static or native methods, or write your own regular expression for each field.
-The JPV validator also works with an array and has such smart features as Logical Negation.
+In the library you can find a dozen methods and functions that can be useful for validating any type of json.
+There are many static or native methods to validate JSON object. At least you can write your own regular expression for each field.
+The JPV validator also supports arrays and logical functions.
 
 ## Install
 
@@ -17,6 +17,11 @@ Stable Release (`2.1.x`)
 
 ```sh
 $ npm install jpv --save
+```
+or
+
+```sh
+$ yarn add jpv
 ```
 
 
@@ -148,7 +153,10 @@ Right now available defined patterns are:
 | datetime             | 2017-03-25 10:30:58.235   |
 
 
-  
+
+--
+
+
 
 
 **Regular Expression** - make your own regular expression
@@ -422,6 +430,13 @@ jpv.validate(json, pattern, {debug : true})
 //# not matched with: /"[number]"/
 ```
 
+## TypeScript usage
+
+```
+import * as jpv from 'jpv';
+
+jpv.validate(json, pattern, false);
+```
 
 ## Testing
 
