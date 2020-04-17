@@ -4,14 +4,11 @@ jpv
 
 Json Pattern Validator.
 
-***jpv***  - is an easy-to-use JSON schema validator library designed for large and complex data.
+***jpv***  - it is an easy-to-use JSON schema validator library for large and complex data.
 
+Describe your JSON pattern using predefined templates or native types or a regular expression then validate using the easy single function.
 
-In the library you can find a dozen methods and functions that can be useful for validating any type of json.
-There are many static or native methods to validate JSON object. At least you can write your own regular expression for each field.
-The JPV validator also supports arrays and logical functions.
-
-## Install
+#### Install
 
 Stable Release (`2.1.x`)
 
@@ -25,7 +22,7 @@ $ yarn add jpv
 ```
 
 
-## Simple Usage
+#### Simple Usage
 
 ```javascript
 
@@ -52,13 +49,13 @@ console.log( jpv.validate(json, pattern ) )
 > validate() method returns boolean (true/false)
 
 
-## Patterns
+#### Patterns
 
 
-JPV allows you to validate the JSON object associated with some patterns: **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Short-Objects**.
+JPV allows you to validate the JSON object associated with some templates: **Fixed**, **Native**, **Defined**, **Regex**, **Functional-Regex**, **Functional-Fixed** and **Short-Objects**.
 
 
-**Fixed Pattern** is the simplest template used to validate JSON against given exact values.
+**Fixed Pattern** is the simplest template used to validate JSON by given exact values.
 
 ```javascript
   var pattern = {
@@ -88,7 +85,7 @@ JPV allows you to validate the JSON object associated with some patterns: **Fixe
   console.log( jpv.validate(json, pattern1) ) // --> true
   console.log( jpv.validate(json, pattern2) ) // --> false
 
-  // because pattern type is a string not number
+  // because of pattern type is a string not number
 ```
 
 
@@ -135,7 +132,7 @@ JPV allows you to validate the JSON object associated with some patterns: **Fixe
   console.log( jpv.validate(json, pattern) )  // --> true
 ```
 
-Right now available defined patterns are:
+Available defined patterns:
 
 | Pattern              | Example                   |
 | ---------------------|:-------------------------:|
@@ -174,7 +171,7 @@ Right now available defined patterns are:
 ```
 
 
-**Functional Patterns** used to implement logical conditions, which are described below.
+**Functional Patterns** used to implement logical conditions
 
 ```javascript
   var json = {
@@ -212,14 +209,14 @@ Example:
 ```
 
 
-## Modes
+#### Modes
 
 There are two ```standard``` and ```strict``` modes.
 
 ```strict``` mode is used when your pattern and given JSON should contain exact fields,
 while in ```standard``` mode JSON can contain more fields than described in the pattern.
 
-By default JPV validator used standard mode. To set up strict mode - need add 3th parameter into the ```jpv.validate``` function:
+By default JPV validator used standard mode. To set up strict mode - need add 3th argument into the ```jpv.validate``` function:
 
 ```javascript
   const options = { mode : "strict" };
@@ -259,10 +256,9 @@ Example using strict and standard modes
   // --> true
 ```
 
-## Logical negation (!) operator
+#### Logical negation (!) operator
 
-Negations ("!") operator allows to negate is the pattern.
-This can be useful when you need to deny a pattern:
+Negations ("!") operator allows to negate the pattern.
 
 Example 1:
 
@@ -318,10 +314,9 @@ Example 3:
   // --> true
 ```
 
-## Empty or Match (?) Operator
+#### Empty or Match (?) Operator
 
-Sometimes it is necessary to compare a template only for a given field. Foe such a cases can be used **Empty or Match** operator.
-Just need to add **?** symbol in the end  of the expression (like we do for regular expression)
+The **Empty or Match** operator is useful when the field is not required to be filled.
 
 ```javascript
   var pattern = {
@@ -378,10 +373,10 @@ Example 2:
   console.log( jpv.validate( c, pattern) ) // --> false
 ```
 
-## Arrays
+#### Arrays
 
 This special pattern is used to validate nested arrays elements. All you need is to create **one** nested pattern inside an array.
-In this case, each object in the array will be validate according the pattern - described on first element of pattern.
+Each array element will be validated according to the first element of the pattern.
 
 ```javascript
   var json = {
@@ -411,10 +406,44 @@ In this case, each object in the array will be validate according the pattern - 
 ```
 
 
-## Debugging
+#### Lenght MaxLength MinLenght
 
-jpv.validate function returns only boolean, this function tells us is either JSON valid or not.
-But if you want to heva more info about errors -just turn on debug mode ({debug : true}) in options
+This special pattern is used to validate nested arrays elements. All you need is to create **one** nested pattern inside an array.
+Each array element will be validated according to the first element of the pattern.
+
+```javascript
+  var json = {
+    users : [
+      {
+        id : 1001478,
+        name : "Alisa"
+      },
+      {
+        id : 1003476,
+        name : "Bob"
+      },
+    ]
+  }
+
+  var pattern = {
+    users : [
+      {
+        id : '(number)',
+        name : '(string)'
+      }
+    ]
+  }
+
+  console.log( jpv.validate(json, pattern) )
+  // --> true
+```
+
+
+
+#### Debugging
+
+The *jpv.validate*  function returns only a boolean type.
+But if you want more information about errors, just turn on debugging mode ({debug: true}) in the third argument of function.
 
 ```
 var json = { index: "Yes"}
@@ -430,7 +459,7 @@ jpv.validate(json, pattern, {debug : true})
 //# not matched with: /"[number]"/
 ```
 
-## TypeScript usage
+#### TypeScript usage
 
 ```
 import * as jpv from 'jpv';
@@ -438,7 +467,7 @@ import * as jpv from 'jpv';
 jpv.validate(json, pattern, false);
 ```
 
-## Testing
+#### Testing
 
 ```
 sudo apt install node-tap

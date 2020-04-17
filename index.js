@@ -7,9 +7,39 @@
 'use strict';
 
 /*
- * Static Types created by Regular Expression
+ * Static Types Created By Regular Expression
  */
-const expressions = require('./expressions.js');
+const patterns = require('./patterns.js');
+
+function JpvObject (type, arg) {
+    this.type = type;
+    this.value = arg;
+}
+
+/**
+ * OR operator
+ * @param patterns
+ */
+module.exports.or = function or (patterns) {
+    return new JpvObject('or', Array.prototype.slice.call(arguments));
+};
+
+/**
+ * AND operator
+ * @param patterns
+ */
+
+module.exports.and = function and (patterns) {
+    return new JpvObject('and', Array.prototype.slice.call(arguments));
+};
+
+/**
+ * NOT operator
+ * @param pattern
+ */
+module.exports.not = function not (pattern) {
+    return new JpvObject('not', pattern);
+};
 
 const push = (options, property, constructor) => {
     if (!options.debug) return 0;
@@ -33,13 +63,14 @@ const pull = (options, level) => {
  * @param pattern
  * @param options
  */
-const compareCommon = (value, pattern, options) => {
+const compare = (value, pattern, options) => {
     /*
-   * Special for debugging
-   * */
-    let res = (result) => {
-        if (!result && options.debug) {
-            options.logger(`error - the value of: {${options.deepLog.join('.')} = ${value}} not matched with: ${JSON.stringify(pattern)}`);
+    * Special for debugging
+    * */
+    const res = (result) => {
+        if (!result && options && options.debug) {
+            options.logger(`error - the value of: {${options.deepLog.join('.')} = ` +
+            `${value}} not matched with: ${JSON.stringify(pattern)}`);
         }
         return result;
     };
@@ -56,6 +87,7 @@ const compareCommon = (value, pattern, options) => {
         // Native Types
         let nativeMatches = pattern.match(/^(!)?\((.*)\)(\?)?$/i);
         if (nativeMatches !== null) {
+            // eslint-disable-next-line valid-typeof
             let match = (value === null ? nativeMatches[2] === 'null' : (typeof value === nativeMatches[2]));
             // Negation ? Operator
             if (typeof nativeMatches[3] !== 'undefined') {
@@ -68,19 +100,31 @@ const compareCommon = (value, pattern, options) => {
 
         // Logical Types
         let logicalMatches = pattern.match(/^(!)?\[(.*)\](\?)?$/i);
-        if (logicalMatches !== null && (logicalMatches[2] in expressions)) {
-            let match = (String(value).match(expressions[logicalMatches[2]]) !== null);
-            // Negation ? Operator
-            if (typeof logicalMatches[3] !== 'undefined') {
-                if (value === null || typeof value === 'undefined' || value === '') {
-                    return true;
+        if (logicalMatches !== null) {
+            for (let i = 0; i < patterns.length; i++) {
+                const match = logicalMatches[2].match(
+                    new RegExp(`^${patterns[i].pattern}$`, patterns[i].flag || '')
+                );
+                if (match) {
+                    const valid = patterns[i].onMatch(String(value), match);
+                    // ? Operator
+                    if (typeof logicalMatches[3] !== 'undefined') {
+                        if (value === null || typeof value === 'undefined' || value === '') {
+                            return true;
+                        }
+                    }
+                    // ! Operator
+                    if (typeof logicalMatches[1] !== 'undefined') {
+                        return res(!valid);
+                    }
+                    return res(valid);
                 }
             }
-            return res(logicalMatches[1] === '!' ? !match : match);
+            return res(false);
         }
 
         // Functional Regex
-        let functionalRegexMatches = pattern.match(/^(!)?\{\/(.*)\/([a-z]*)\}(\?)?$/i);
+        let functionalRegexMatches = pattern.match(/^(?!=^|,)(!)?\{\/(.*)\/([a-z]*)\}(\?)?$/i);
         if (functionalRegexMatches !== null) {
             let match = (String(value).match(new RegExp(functionalRegexMatches[2], functionalRegexMatches[3])) !== null);
             // Negation ? Operator
@@ -109,23 +153,46 @@ const compareCommon = (value, pattern, options) => {
         return res(value === pattern);
     }
 
+    // Constructor is JpvObject
+    if (pattern.constructor === JpvObject) {
+        if (pattern.type === 'not') {
+            return res(!compare(value, pattern.value, options));
+        }
+        if (pattern.type === 'and') {
+            for (let i = 0; i < pattern.value.length; i++) {
+                if (!compare(value, pattern.value[i])) {
+                    return res(false);
+                }
+            }
+            return true;
+        }
+        if (pattern.type === 'or') {
+            for (let i = 0; i < pattern.value.length; i++) {
+                if (compare(value, pattern.value[i])) {
+                    return true;
+                }
+            }
+            return res(false);
+        }
+    }
+
     // pattern = number | boolean | symbol | bigint
-    if ((pattern === null) || (typeof pattern === 'number') || (typeof pattern === 'symbol') ||
-        (typeof pattern === 'boolean') || (typeof pattern === 'bigint') || (typeof pattern === 'undefined')) {
+    if ((typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean') ||
+        (typeof pattern === 'bigint') || (typeof pattern === 'undefined')) {
         return res(pattern === value);
     }
 
     // pattern = object
     if (typeof pattern === 'object') {
-        if (pattern !== null && value !== null) {
+        if (value !== null) {
             return res(value.constructor === pattern.constructor);
         }
         return res(value === pattern);
     }
 
-    // pattern = object
+    // pattern is a function
     if (typeof pattern === 'function') {
-        return res(value.constructor === pattern);
+        return !!pattern(value);
     }
 
     throw new Error('invalid data type');
@@ -145,7 +212,7 @@ const compareStandard = (value, pattern, options) => {
     if (typeof pattern === 'undefined') {
         return true;
     }
-    return compareCommon(value, pattern, options);
+    return compare(value, pattern, options);
 };
 
 /**
@@ -161,11 +228,12 @@ const compareStrict = (value, pattern, options) => {
     * */
     if (typeof pattern === 'undefined') {
         if (options.debug) {
-            options.logger(`error - the value of: {${options.deepLog.join('.')} = ${value}} not matched with: ${JSON.stringify(pattern)}`);
+            options.logger(`error - the value of: {${options.deepLog.join('.')} ` +
+                `= ${value}} not matched with: ${JSON.stringify(pattern)}`);
         }
         return false;
     }
-    return compareCommon(value, pattern, options);
+    return compare(value, pattern, options);
 };
 
 /**
@@ -313,23 +381,21 @@ const strictValidate = (json, pattern, options) => {
     return true;
 };
 
-module.exports = {
-    /**
-     * Main Function
-     * @param json
-     * @param pattern
-     * @param opt // for an older version it could be boolean
-     */
-    validate: (json, pattern, opt) => {
-        const options = (typeof opt === 'object' && Object.create(opt)) || {};
-        options.strict = (options.mode === 'strict') || ((typeof opt === 'boolean') && opt) || false;
-        options.debug = options.debug || false;
-        options.logger = options.logger || console.log;
-        options.deepLog = [];
+/**
+ * Main Function
+ * @param json
+ * @param pattern
+ * @param opt // for an older version it could be boolean
+ */
+module.exports.validate = (json, pattern, opt) => {
+    const options = (typeof opt === 'object' && Object.create(opt)) || {};
+    options.strict = (options.mode === 'strict') || ((typeof opt === 'boolean') && opt) || false;
+    options.debug = options.debug || false;
+    options.logger = options.logger || console.log;
+    options.deepLog = [];
 
-        if (options.strict) {
-            return strictValidate(json, pattern, options);
-        }
-        return standardValidate(json, pattern, options);
+    if (options.strict) {
+        return strictValidate(json, pattern, options);
     }
+    return standardValidate(json, pattern, options);
 };

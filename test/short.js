@@ -1,3 +1,8 @@
+/*!
+ * accepts
+ * Copyright(c) 2020 Manvel Khnkoyan
+ * MIT Licensed
+ */
 
 var tap = require('tap');
 var jpv = require('../index.js');
