@@ -4,17 +4,21 @@
  */
 
 module.exports = [
+
+    /* deprecated */
     {
         pattern: 'exist',
         onMatch: (value, match) => value.match(/.*/)
     },
     {
-        pattern: 'empty',
-        onMatch: (value, match) => value.match(/^$/)
-    },
-    {
         pattern: 'boolean',
         onMatch: (value, match) => value.match(/^(true|false)$/i)
+    },
+
+    /*  */
+    {
+        pattern: 'empty',
+        onMatch: (value, match) => value.match(/^$/)
     },
     {
         pattern: 'double',

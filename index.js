@@ -38,8 +38,8 @@ function comparePattern (value, pattern) {
             return patterns[i].onMatch(String(value), match);
         }
     }
-    const msg = `Unrecognized Pattern: ${pattern}`;
-    throw new Error(msg);
+    console.log(`Unrecognized Pattern: ${pattern}`);
+    throw new Error('Invalid Pattern');
 }
 
 /**
@@ -69,10 +69,10 @@ module.exports.not = function not (pattern) {
 
 /**
  * EXACT operator
- * @param pattern
+ * @param value - exact value
  */
-module.exports.exact = function exact (pattern) {
-    return new JpvObject('exact', pattern);
+module.exports.exact = function exact (value) {
+    return new JpvObject('exact', value);
 };
 
 /**
@@ -118,21 +118,29 @@ const compare = (value, pattern, options) => {
     * Special for debugging
     * */
     const res = (result) => {
-        let val = (pattern.constructor === JpvObject)
-            ? `operator "${pattern.type}": ${JSON.stringify(pattern.value)}` : JSON.stringify(pattern);
+        let val = '';
+        if (!pattern || ((typeof pattern !== 'object') && (typeof pattern !== 'string') && typeof pattern !== 'function')) {
+            val = String(pattern)
+        } else if (pattern.constructor === JpvObject) {
+            val = `operator "${pattern.type}": ${JSON.stringify(pattern.value)}`;
+        } else {
+            JSON.stringify(pattern)
+        }
+
+
         if (typeof pattern === 'function') {
             val = pattern.toString();
         }
         if (!result && options && options.debug) {
-            options.logger(`error - the value of: {${options.deepLog.join('.')} = ` +
-            `${value}} not matched with: ${val}`);
+            options.logger(`error - the value of: {${options.deepLog.join('.')}: ` +
+            `${String(value)}} not matched with: ${val}`);
         }
         return result;
     };
 
-    // pattern = number | boolean | symbol | bigint
+    // simple types pattern = number | boolean | symbol | bigint
     if ((typeof pattern === 'number') || (typeof pattern === 'symbol') || (typeof pattern === 'boolean') ||
-        (typeof pattern === 'bigint') || (typeof pattern === 'undefined')) {
+        (typeof pattern === 'bigint') || (typeof pattern === 'undefined') || (pattern === null)) {
         return res(pattern === value);
     }
 
@@ -423,6 +431,7 @@ const iterate = (value, pattern, valid, cb, options) => {
                 * */
                 if ((typeof value[property] === 'object') &&
                     (typeof pattern[property] === 'object') &&
+                    (pattern[property].constructor !== JpvObject) &&
                     (Object.keys(pattern[property]).length !== 0)) {
                     return (valid = iterate(value[property], pattern[property], valid, cb, options));
                 }

@@ -186,9 +186,7 @@ Available defined patterns:
 
 | Pattern                         | Valid example             |  Descriptiom                       |
 | --------------------------------|:-------------------------:|:-----------------------------------|
-| exist                           | Yes                       | Stringifying and comparing         |
 | empty                           | []                        | Stringifying and comparing         |
-| boolean                         | True                      | string is either "true" or "false" |
 | double                          | 12.258028                 |                                    |
 | naturalNumber                   | 2                         |                                    |
 | number                          | 0284                      | any digital numbers                |
@@ -243,14 +241,14 @@ JPV allows you to use the most fundamental operators “or”, “and”, “not
 _“or”_ and _“and”_ operators patternas are set by list of arguments:
 
 ```javascript
-jpv.or(patern1, patern2, .....)
-jpv.and(patern1, patern2, .....)
+jpv.or(patern1, patern2, ... .)
+jpv.and(patern1, patern2, ... .)
 ```
 
 Also they can be mixed:
 
 ```javascript
-jpv.and(patern1, patern2, jpv.or(patern3, patern4, .....), .....)
+jpv.and(patern1, patern2, jpv.or(patern3, patern4, ... .), ... .)
 ```
 
 Not operator receive only one pattern
@@ -385,8 +383,26 @@ Each array element will be validated according to the first element of the patte
 
 #### Exact value
 
+By exact value comparison - values must be of the same type:
+
+```javascript
+const json = { 
+  index: 999
+}
+
+jpv.validate(json, {index: 999})
+// -> true
+
+jpv.validate(json, {index: '999'})
+// -> false
+
+jpv.validate(json, {index: '[eq(999)]'})
+// -> true
+
+``` 
+
 In some cases, there is an operator that can be useful when the assigned value could look like the short tags patterns.
-In this case use _exact_ operator:
+In this case use _"exact"_ operator:
 
 ```javascript
 const json = { index: "[email]"}
@@ -420,6 +436,6 @@ jpv.validate(json, pattern, false);
 
 ```
 sudo apt install node-tap
-sudo npm install tap
+sudo npm install tap --dev
 tap test/*.js
 ```
