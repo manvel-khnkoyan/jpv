@@ -74,26 +74,26 @@ module.exports = [
     {
         pattern: 'eq\\((-?\\d*(\\.\\d+)?)\\)',
         flag: 'u',
-        onMatch: (value, match) => parseFloat(value) === parseFloat(match[1])
+        onMatch: (value, match) => isNaN(value) ? false : parseFloat(value) === parseFloat(match[1])
     },
     {
         pattern: 'lt\\((-?\\d*(\\.\\d+)?)\\)',
         flag: 'u',
-        onMatch: (value, match) => parseFloat(value) < parseFloat(match[1])
+        onMatch: (value, match) => isNaN(value) ? false : parseFloat(value) < parseFloat(match[1])
     },
     {
         pattern: 'gt\\((-?\\d*(\\.\\d+)?)\\)',
         flag: 'u',
-        onMatch: (value, match) => parseFloat(value) > parseFloat(match[1])
+        onMatch: (value, match) => isNaN(value) ? false : parseFloat(value) > parseFloat(match[1])
     },
     {
         pattern: 'lte\\((-?\\d*(\\.\\d+)?)\\)',
         flag: 'u',
-        onMatch: (value, match) => parseFloat(value) <= parseFloat(match[1])
+        onMatch: (value, match) => isNaN(value) ? false : parseFloat(value) <= parseFloat(match[1])
     },
     {
         pattern: 'gte\\((-?\\d*(\\.\\d+)?)\\)',
         flag: 'u',
-        onMatch: (value, match) => parseFloat(value) >= parseFloat(match[1])
+        onMatch: (value, match) => isNaN(value) ? false : parseFloat(value) >= parseFloat(match[1])
     }
 ];

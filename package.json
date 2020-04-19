@@ -1,6 +1,6 @@
 {
   "name": "jpv",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Json Pattern Validator",
   "main": "index.js",
   "scripts": {
@@ -25,8 +25,5 @@
   "bugs": {
     "url": "https://github.com/manvel-khnkoyan/jpv/issues"
   },
-  "homepage": "https://github.com/manvel-khnkoyan/jpv#readme",
-  "devDependencies": {
-    "eslint": "^5.16.0"
-  }
+  "homepage": "https://github.com/manvel-khnkoyan/jpv#readme"
 }
