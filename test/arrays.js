@@ -1,30 +1,53 @@
 
-var tap = require('tap');
-var jpv = require('../index.js');
+const tap = require('tap');
+const { validate, is, typeOf } = require('../index.js');
 
-var json = {
-    key1: [1, 2, 3],
-    key2: [{
-        status: true
-    }]
+const json = {
+    name: 'arrays',
+    items: {
+        name: 'arrays',
+        list: [
+            {
+                name: 'Bamboo',
+                cost: 180000
+            },
+            {
+                name: 'Samboo',
+                cost: -50
+            }
+        ]
+    }
 };
 
-var pattern1 = {
-    key1: [],
-    key2: [{
-        status: '(string)'
-    }]
+const validPattern = {
+    name: /arrays/,
+    items: {
+        name: typeOf('string'),
+        list: [
+            {
+                name: is('exist'),
+                cost: typeOf('number')
+            }
+        ]
+    }
 };
 
-var pattern2 = {
-    key1: [],
-    key2: [{
-        status: '(boolean)'
-    }]
+const invalidPattern = {
+    name: /arrays/,
+    items: {
+        name: typeOf('string'),
+        list: [
+            {
+                name: is('min-length(5)'),
+                cost: is('gt(0)')
+            }
+        ]
+    }
 };
 
-tap.test('jpv.validate', function (t) {
-    t.ok(!jpv.validate(json, pattern1), 'Validate json Pattern');
-    t.ok(jpv.validate(json, pattern2));
+// Valid Case
+tap.test('Arrays', function (t) {
+    t.ok(validate(json, validPattern, { debug: true }), 'Valid Case');
+    t.ok(!validate(json, invalidPattern, { debug: true }), 'Invalid Case');
     t.end();
 });
