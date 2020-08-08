@@ -2,50 +2,42 @@
 jpv
 ==========
 
-Json Pattern Validator.
-
-***jpv***  - it is an easy-to-use JSON schema validator library for large and complex data.
-
-Validating a JSON object by comparing it by source like pattern, passing through all the nodes of the pattern using constious simple validation methods.
+**Json Pattern Validator.**
+it is an easy-to-use JSON schema validator library that validates a JSON object by given the same structural pattern.
 
 #### Main concept
 
-Verification comes with the **jpv.validate** function
+Verification comes with the **jpv.validate** function (returns boolean)
 
 ```javascript
 jpv.validate(
   json,   // --> The JSON Object you want to validate
-  pattern // --> The json-like pattern
-)
+  pattern // --> The json-like validation pattern
+) 
 ```
-> The function returns only true or false
-
-
-A simple use case: 
+ 
+-- example: 
 
 ```javascript
-import jpv from 'jpv';
+const jpv = require("jpv");
 
 const json = {
-  status : 'OK',
+  status : "OK",
   data : {
-    url : 'http://example.com'
+    url : "http://example.com"
   }
 }
-
 const pattern = {
   status : /^OK$/,
   data : {
     url : "[url]"
   }
 }
-    
-jpv.validate(json, pattern ) 
-// -> true
+
+jpv.validate(json, pattern ) // true
 ```
 
-
-#### Install
+### Install
 
 Stable Release (`2.2.x`)
 
@@ -53,30 +45,28 @@ Stable Release (`2.2.x`)
 $ npm install jpv --save
 ```
 or
-
 ```sh
 $ yarn add jpv
 ```
 
+### Regular Expressions
 
-#### Regular expression
+The easiest and most common way to compare JSON property values is to use a regular expression.
 
 ```javascript
 const json = {
-  key : 'A-8',
+  key : "A-8",
   value: 18
 }
-
 const pattern = {
   key : /^[A-Z]-[0-9]$/,
   value: new RegExp(/\d/)
 }
 
-jpv.validate(json, pattern)  
-// --> true
+jpv.validate(json, pattern)  // true
 ```
 
-Pay attention to the type of regular expression, it should not be a string.
+`Pay attention to the type of regular expression, it should not be a string.`
 
 ```javascript
 const pattern = {
@@ -85,187 +75,119 @@ const pattern = {
 }
 ```
 
-#### Native Types 
+### Defined Patterns
 
-The case when you need to validate by object native type - can be done by
+The library provides a bunch of various popular defined patterns such as email address, URL, date, etc.
+There are two way to use defined patterns:
 
-
-using a brackets short tags.
+1 - using short tags 
 
 ```javascript
-{
-    key: '(NATIVE-TYPE)'
-}
+{ key: "[email]" }
 ```
 
-or using "typeOf" operator
+2 - using "**is**" operator:
 
 ```javascript
-{
-    key: jpv.typeOf('NATIVE-TYPE')
-}
+{ key: jpv.is("email") }
 ```
 
-Here is an example:
+
+-- example of using short tag
 
 ```javascript
-  const json = {
-    key1: 98,
-    key2: false,
-    key3: true,
-    key4: null,
-    key5: []
-  }
+  const json = { key: "2017-12-25" }
+  const pattern = { key: "[date]" }
 
+  jpv.validate(json, pattern)  // true
+```
+
+
+-- example of using **is** oprator
+
+```javascript
+  const json = { key: "user@gmail.com" }
+  const pattern = { key: jpv.is("email") }
+
+  jpv.validate(json, pattern)  // true
+```
+
+-- few more examples
+
+```javascript
+  const json = { key: []] }
+  const pattern = { key: "[empty]" }
+```
+```javascript
+  const json = { key: "some text"] }
+  const pattern = { key: "[min-length(9)]" }
+```
+
+Library-based available patterns are (with a next to valid examples)
+
+- **double**  - *(12.258028)* 
+- **naturalNumber** - *(2)*
+- **number** - *(0284)* - any digital numbers
+- **integer** - *(1478)*
+- **url** - *(https://fb.com)*
+- **alphaNumeric**  - *(a7d34)*
+- **email** - *(user@example.com)*
+- **date** - *(2017-05-16)*
+- **datetime**  - *(2017-03-25 10:30:58.235)*
+- **length(3)**  - *(abc)* - string length
+- **min-length(4)**  - *(abcd)* - string minimum length
+- **max-length(5)**  - *(abcde)* - string maximum length
+- **eq(15)**  - *(15)* - equal the number
+- **lt(17)**  - *(16)* - less then
+- **gt(18)**  - *(19)* - greater then
+- **lte(17)**  - *(17)* - less then or equal
+- **gte(18)**  - *(18)* - greater then or equal
+  
+### "and", "or", "not" Logical Operators
+
+The library allows you to create complex patterns using the logical operators: "**or**", "**and**", "**not**":
+
+```javascript
+  const json = { key: 150 }
   const pattern = {
-    key1: '(number)',
-    key2: '(boolean)',
-    key3: jpv.typeOf('boolean'),
-    key4: '(object)', // typeof null === 'object'
-    key5: '(object)',
-    key6: '(undefined)'
+    key: jpv.and("[eq(150)]", "(number)") 
   }
-
-  jpv.validate(json, pattern) 
-  // --> true
+  
+  jpv.validate(json, pattern) // true  
 ```
 
-#### Patterns
-
-The library provides the ability to check using the declared patterns for most popular types, such as email, URL, date, etc.
-
-There are two way of using patterns - 
-
-short tags 
-
 ```javascript
-{
-    key: '[email]'
-}
-```
-
-and "is" operator:
-
-```javascript
-{
-    key: jpv.is('email')
-}
-```
-
-
-More examples:
-
-```javascript
-  const json = {
-    a: '2017-12-25',
-    b: 'user@gmail.com',
-    c: [],
-    d: 'some text'
-  }
-
+  const json = { key: 150 }
   const pattern = {
-    a: '[date]',
-    b: '[email]',
-    c: '[empty]',
-    d: '[min-length(9)]',
+    key: jpv.and("[eq(150)]", "(string)") 
   }
-  
-  // or 
-  const pattern2 = {
-    a: jpv.is('date]'),
-    b: jpv.is('email'),
-    c: jpv.is('empty'),
-    d: jpv.is('min-length(9)')
-   }
 
-  jpv.validate(json, pattern)  
-  // --> true
+  jpv.validate(json, pattern) // false  
 ```
 
-Available defined patterns:
-
-| Pattern                         | Valid example             |  Descriptiom                       |
-| --------------------------------|:-------------------------:|:-----------------------------------|
-| empty                           | []                        | Stringifying and comparing         |
-| double                          | 12.258028                 |                                    |
-| naturalNumber                   | 2                         |                                    |
-| number                          | 0284                      | any digital numbers                |
-| integer                         | 1478                      |                                    |
-| url                             | https://fb.com            |                                    |
-| alphaNumeric                    | a7                        |                                    |
-| email                           | user@example.com          |                                    |
-| date                            | 2017-05-12                |                                    |
-| datetime                        | 2017-03-25 10:30:58.235   |                                    |
-| length(3)                       | abc                       | string length                      |
-| min-length(4)                   | abcd                      | string min length                  |
-| max-length(4)                   | abcde                     | string max length                  |
-| eq(15)                          | 15                        | equal the number                   |
-| lt(17)                          | 16                        | less then                          |
-| gt(18)                          | 19                        | greater then                       |
-| lte(17)                         | 17                        | less then or equal                 |
-| gte(18)                         | 18                        | greater then or equal              |
-
-
-
----
----  
-
-
-  
-  
-### "and", "or", "not" operators
-
-JPV allows you to use the most fundamental operators “or”, “and”, “not”, as we do in almost every programming language.
-
-
-```javascript
-  const json = {
-    key: 150
-  }
-
-  const pattern1 = {
-    key: jpv.and('[eq(150)]', '(number)') 
-  }
-
-  const pattern2 = {
-    key: jpv.and('[eq(150)]', '(string)') 
-  }
-
-
-  jpv.validate(json, pattern1)
-  // --> true  
-  jpv.validate(json, pattern2)  
-  // --> false
-```
-
-_“or”_ and _“and”_ operators patternas are set by list of arguments:
+_“**or**”_ and _“**and**”_ operators arguments take a list of patterns or combined operators
 
 ```javascript
 jpv.or(patern1, patern2, ... .)
 jpv.and(patern1, patern2, ... .)
 ```
-
-Also they can be mixed:
-
 ```javascript
 jpv.and(patern1, patern2, jpv.or(patern3, patern4, ... .), ... .)
 ```
 
-Not operator receive only one pattern
+_"**not**"_ operator takes only one argument (others will be ignored)
 
 ```javascript
 jpv.not(pattern)
 ```
-
-Using these operators we can write big and complex conditions like:
-
+Using logical operators easy to create big and complex conditions like this example:
 
 ```javascript
   const {and, or, not} = jpv;
   
   const jpvEmailOrPhone = or(
-    and('[email]', not('bot@example.com')),
-    and('[number]', '[length(10)]')
+    and("[email]", not("bot@example.com")),
+    and("[number]", "[length(10)]")
   );  
 
   const json = {
@@ -283,76 +205,56 @@ Using these operators we can write big and complex conditions like:
   
 ```
   
+### Functions
 
-### Functional
-
-This is the future specifically for custom validation patterns. 
-Patterns with functions will be called any time when validating:
+Instead of a patterns, there is also a way to customize using functions.
 
 ```javascript
   const json = {
      name: "Mister Albert"
   }
-
   const pattern = {
     name: (name) => name.split(' ').length > 1
   }
 
-  jpv.validate(json, pattern)
-  // - true
-
+  jpv.validate(json, pattern)  // true
 ``` 
 
-### Modes
+#### Native Types 
 
-There are two ```standard``` and ```strict``` modes.
-
-```strict``` mode is used when your pattern and given JSON should contain exact fields,
-while in ```standard``` mode JSON can contain more fields than described in the pattern.
-
-By default JPV validator used standard mode. To set up strict mode - need add 3th argument into the ```jpv.validate``` function:
+This is the case when there is need to validate the value using native JS types. There are two ways to define:
+1 - using a brackets short tags.
 
 ```javascript
-  const options = { mode: "strict" };
-
-  // strict mode
-  jpv.validate(json, pattern, options );
+{ key: "(any native type name)" }
+```
+2 - using "typeOf" operator
+```javascript
+{ key: jpv.typeOf('any native type name') }
 ```
 
-Example of usage strict and standard modes
+-- examples:
 
 ```javascript
-  const json = {
-    a: 5789,
-    b: "Another One"
-  }
+  const json = { key: 98 }
+  const pattern = { key: "(number)" } 
+            // or { key: jpv.typeOf('number')} 
+ ```
 
-  const pattern1 = {
-    a: '(number)'
-  }
- 
-  const pattern2 = {
-    a: '(number)',
-    b: '(string)'
-  }
-
-
-  // standard mode
-  console.log(  jpv.validate(json, pattern1)  )
-  // --> true
-
-  // strict mode
-  console.log(  jpv.validate(json, pattern1, { mode : "strict" } ) )
-  // --> false
-  // missing b
-
-```
-
+```javascript
+  const json = { key: false }
+  const pattern = { key: '(boolean)' } 
+ ```
+    
+```javascript
+  const json = { key:  [] }
+  const pattern = { key: jpv.typeOf('object') } 
+ ```    
 
 ### Arrays
 
 To validate nested arrays elements all you need is to create **one** nested pattern inside an array.
-Each array element will be validated according to the first element of the pattern.
+Each array element will be validated according to the first element pattern.
 
 ```javascript
   const json = {
@@ -371,8 +273,8 @@ Each array element will be validated according to the first element of the patte
   const pattern = {
     users : [
       {
-        id: '(number)',
-        name: '(string)'
+        id: "(number)",
+        name: "(string)"
       }
     ]
   }
@@ -381,38 +283,74 @@ Each array element will be validated according to the first element of the patte
   // --> true
 ```
 
-#### Exact value
+#### Exact values
 
-By exact value comparison - values must be of the same type:
+Instead of any pattern also can be set at an exact value. Beware that when setting exact value in pattern and the JSON values must be the same type in order to be valid.
 
 ```javascript
 const json = { 
   index: 999
 }
 
-jpv.validate(json, {index: 999})
-// -> true
-
-jpv.validate(json, {index: '999'})
-// -> false
-
-jpv.validate(json, {index: '[eq(999)]'})
-// -> true
-
+jpv.validate(json, {index: 999}) // true
+jpv.validate(json, {index: "999"}) // false
+jpv.validate(json, {index: "[eq(999)]"}) // true
 ``` 
 
-In some cases, there is an operator that can be useful when the assigned value could look like the short tags patterns.
-In this case use _"exact"_ operator:
+##### "exact" Operator
+There is an _"**exact**"_ operator which can be useful to clear up confusion when the string looks like a short tag
 
 ```javascript
 const json = { index: "[email]"}
-const pattern = { index: jpv.exact("[number]") }
+const pattern = { index: jpv.exact("[email]") }
 ``` 
+
+### Modes
+
+There are two ```standard``` and ```strict``` modes.
+
+```strict``` mode is used when your pattern and given JSON should contain exact fields,
+while in ```standard``` mode - JSON can contain more fields than described in the pattern.
+
+By default JPV validator used standard mode. To set up strict mode - need add 3th argument into the ```jpv.validate``` function:
+
+```javascript
+  const options = { mode: "strict" };
+
+  // strict mode
+  jpv.validate(json, pattern, options );
+```
+
+-- example of usage strict and standard modes
+
+```javascript
+  const json = {
+    a: 5789,
+    b: "Another One"
+  }
+
+  const pattern1 = {
+    a: "(number)"
+  }
+ 
+  const pattern2 = {
+    a: "(number)",
+    b: "(string)"
+  }
+
+  // standard mode
+  jpv.validate(json, pattern1) //true
+
+  // strict mode
+  jpv.validate(json, pattern1, { mode : "strict" } ) // false
+  // missing b
+```
+
 
 ### Debugging
 
 The *jpv.validate*  function returns only a boolean type.
-But if you want more information about errors, just turn on debugging mode ({debug: true}) in the third argument of function.
+But if you want more information in output about errors, just turn on debugging mode ({debug: true}) adding in the third argument of function.
 
 ```javascript
 const json = { index: "Yes"}
@@ -427,7 +365,7 @@ jpv.validate(json, pattern, {debug : true})
 #### TypeScript usage
 
 ```
-import * as jpv from 'jpv';
+import * as jpv from "jpv";
 
 jpv.validate(json, pattern, false);
 ```
