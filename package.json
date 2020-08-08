@@ -1,7 +1,7 @@
 {
   "name": "jpv",
   "version": "2.2.1",
-  "description": "Json Pattern Validator",
+  "description": "Json Pattern Validator - JSON schema validator library",
   "main": "index.js",
   "scripts": {
     "test": "tap test/*.js"
@@ -15,9 +15,6 @@
     "pattern",
     "validator",
     "schema",
-    "node",
-    "validate",
-    "javascript",
     "regex",
     "validate"
   ],
@@ -26,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/manvel-khnkoyan/jpv/issues"
   },
-  "homepage": "https://github.com/manvel-khnkoyan/jpv#readme"
+  "homepage": "https://github.com/manvel-khnkoyan/jpv#readme",
+  "devDependencies": {
+    "tap": "^14.10.8"
+  }
 }

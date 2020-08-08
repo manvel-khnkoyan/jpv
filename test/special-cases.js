@@ -1,11 +1,11 @@
 
 const tap = require('tap');
 const jpv = require('../index.js');
-const {is} = jpv;
+const { is } = jpv;
 
 const json = {
     key1: 'OK',
-    key2: NaN,
+    key2: NaN
 };
 
 const pattern = {

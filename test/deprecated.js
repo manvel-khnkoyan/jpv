@@ -1,11 +1,11 @@
 
 const tap = require('tap');
-const { validate, is, typeOf } = require('../index.js');
+const { validate } = require('../index.js');
 
 const json = {
     key1: 'OK',
     key2: 'Yes',
-    key3: 15,
+    key3: 15
 };
 
 const validPattern1 = {
@@ -30,7 +30,7 @@ const invalidPattern2 = {
     key1: '{/OK/}',
     key2: '!(string)',
     key3: 15
-}
+};
 
 // Valid Case
 tap.test('Deprecated', function (t) {

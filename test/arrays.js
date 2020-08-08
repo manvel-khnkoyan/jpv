@@ -51,3 +51,42 @@ tap.test('Arrays', function (t) {
     t.ok(!validate(json, invalidPattern, { debug: true }), 'Invalid Case');
     t.end();
 });
+
+// Corrupted Array Cases
+
+const corruptedArray1 = {
+    name: 'Corrupted Array 1',
+    items: {
+        sneakyStuff: 'Don\'t tell anyone, but I\'m not actually an array.',
+        constructor: [].constructor
+    }
+};
+
+const corruptedArray2 = {
+    name: 'Corrupted Array 2',
+    items: '[object Array]'
+};
+
+const corruptedArray3 = {
+    name: 'Corrupted Array 3',
+    items: {
+        constructor: 'Array'
+    }
+};
+
+const normalArray1 = {
+    items: ['Normal One', 1, {}]
+};
+
+const corruptedCheckPattern = {
+    items: []
+};
+
+// Valid Case
+tap.test('Arrays Corrupted case', function (t) {
+    t.ok(!validate(corruptedArray1, corruptedCheckPattern, { debug: true }), 'Corrupted Array 1');
+    t.ok(!validate(corruptedArray2, corruptedCheckPattern, { debug: true }), 'Corrupted Array 2');
+    t.ok(!validate(corruptedArray3, corruptedCheckPattern, { debug: true }), 'Corrupted Array 3');
+    t.ok(validate(normalArray1, corruptedCheckPattern, { debug: true }), 'Corrupted Array Normmal Case');
+    t.end();
+});

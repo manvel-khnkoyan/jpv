@@ -16,7 +16,7 @@ const pattern = {
         url: '[url]'
     },
     key3: new RegExp('[0-9]+', 'i'),
-    key4: '[datetime]',
+    key4: '[datetime]'
 };
 
 const pattern2 = {

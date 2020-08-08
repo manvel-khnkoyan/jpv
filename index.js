@@ -43,6 +43,27 @@ function comparePattern (value, pattern) {
 }
 
 /**
+ * Custom Is Array
+ * @param value
+ * @returns boolean
+ */
+function isArray (value) {
+    if (Object.prototype.hasOwnProperty.call(Array, 'isArray')) {
+        return Array.isArray(value);
+    }
+    if (typeof value !== 'object') {
+        return false;
+    }
+    if (Object.prototype.toString.call(value) !== '[object Array]') {
+        return false;
+    }
+    if (!(value instanceof Array)) {
+        return false;
+    }
+    return true;
+}
+
+/**
  * OR operator
  * @param patterns
  */
@@ -120,20 +141,19 @@ const compare = (value, pattern, options) => {
     const res = (result) => {
         let val = '';
         if (!pattern || ((typeof pattern !== 'object') && (typeof pattern !== 'string') && typeof pattern !== 'function')) {
-            val = String(pattern)
+            val = String(pattern);
         } else if (pattern.constructor === JpvObject) {
             val = `operator "${pattern.type}": ${JSON.stringify(pattern.value)}`;
         } else {
-            JSON.stringify(pattern)
+            JSON.stringify(pattern);
         }
-
 
         if (typeof pattern === 'function') {
             val = pattern.toString();
         }
         if (!result && options && options.debug) {
             options.logger(`error - the value of: {${options.deepLog.join('.')}: ` +
-            `${String(value)}} not matched with: ${val}`);
+                `${String(value)}} not matched with: ${val}`);
         }
         return result;
     };
@@ -270,6 +290,10 @@ const compare = (value, pattern, options) => {
 
     // pattern = object
     if (typeof pattern === 'object') {
+        if (isArray(pattern)) {
+            return res(isArray(value));
+        }
+
         if (value !== null) {
             return res(value.constructor === pattern.constructor);
         }
@@ -393,13 +417,13 @@ const iterate = (value, pattern, valid, cb, options) => {
     * Iterate through value
     * */
     for (const property in value) {
-        if (value.hasOwnProperty(property)) {
+        if (Object.prototype.hasOwnProperty.call(value, String(property))) {
             const level = push(options, property, value.constructor);
             valid = (() => {
                 /*
                 * When missing pattern
                 * */
-                if (!pattern.hasOwnProperty(property)) {
+                if (!Object.prototype.hasOwnProperty.call(pattern, String(property))) {
                     return (valid = cb(value[property], undefined, options));
                 }
 
@@ -411,8 +435,8 @@ const iterate = (value, pattern, valid, cb, options) => {
                 /*
                 * iterate if pattern is an Array
                 * */
-                if ((pattern[property].constructor === Array) && (pattern[property].length > 0)) {
-                    if (value[property].constructor !== Array) {
+                if ((isArray(pattern[property])) && (pattern[property].length > 0)) {
+                    if (!isArray(value[property])) {
                         return (valid = cb(value[property], pattern[property], options));
                     }
                     for (let i = 0; i < value[property].length; i++) {

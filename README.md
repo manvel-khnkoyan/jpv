@@ -6,7 +6,7 @@ Json Pattern Validator.
 
 ***jpv***  - it is an easy-to-use JSON schema validator library for large and complex data.
 
-Validating a JSON object by comparing it with a pattern object, passing through all the nodes of the pattern using constious simple validation methods.
+Validating a JSON object by comparing it by source like pattern, passing through all the nodes of the pattern using constious simple validation methods.
 
 #### Main concept
 
@@ -14,8 +14,8 @@ Verification comes with the **jpv.validate** function
 
 ```javascript
 jpv.validate(
-  json, // --> The JSON Object you want to validate
-  pattern // --> The pattern object using the same structure as JSON with the validation patterns.
+  json,   // --> The JSON Object you want to validate
+  pattern // --> The json-like pattern
 )
 ```
 > The function returns only true or false
@@ -213,7 +213,7 @@ Available defined patterns:
 
   
   
-#### "and", "or", "not" operators
+### "and", "or", "not" operators
 
 JPV allows you to use the most fundamental operators “or”, “and”, “not”, as we do in almost every programming language.
 
@@ -269,7 +269,7 @@ Using these operators we can write big and complex conditions like:
   );  
 
   const json = {
-     key1: 'example@gmal.com',
+     key1: 'example@gmail.com',
      key2: '1234567890'
   }
 
@@ -284,7 +284,7 @@ Using these operators we can write big and complex conditions like:
 ```
   
 
-#### Functional
+### Functional
 
 This is the future specifically for custom validation patterns. 
 Patterns with functions will be called any time when validating:
@@ -303,7 +303,7 @@ Patterns with functions will be called any time when validating:
 
 ``` 
 
-#### Modes
+### Modes
 
 There are two ```standard``` and ```strict``` modes.
 
@@ -349,7 +349,7 @@ Example of usage strict and standard modes
 ```
 
 
-#### Arrays
+### Arrays
 
 To validate nested arrays elements all you need is to create **one** nested pattern inside an array.
 Each array element will be validated according to the first element of the pattern.
@@ -409,7 +409,7 @@ const json = { index: "[email]"}
 const pattern = { index: jpv.exact("[number]") }
 ``` 
 
-#### Debugging
+### Debugging
 
 The *jpv.validate*  function returns only a boolean type.
 But if you want more information about errors, just turn on debugging mode ({debug: true}) in the third argument of function.

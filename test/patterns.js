@@ -72,89 +72,89 @@ const validPattern2 = {
     gte: is('gte(20)')
 };
 
-const j1 = {exist: null};
-const s1 = {exist: '![exist]'};
-const o1 = {exist: not(is('exist'))};
+const j1 = { exist: null };
+const s1 = { exist: '![exist]' };
+const o1 = { exist: not(is('exist')) };
 
-const j2 = {empty: 'yes'};
-const s2 = {empty: '[empty]'};
-const o2 = {empty: is('empty')};
+const j2 = { empty: 'yes' };
+const s2 = { empty: '[empty]' };
+const o2 = { empty: is('empty') };
 
-const j3 = {empty: [1,2]};
-const s3 = {empty: '[empty]'};
-const o3 = {empty: is('empty')};
+const j3 = { empty: [1, 2] };
+const s3 = { empty: '[empty]' };
+const o3 = { empty: is('empty') };
 
-const j4 = {empty: 'OK'};
-const s4 = {empty: '[boolean]'};
-const o4 = {empty: is('boolean')};
+const j4 = { empty: 'OK' };
+const s4 = { empty: '[boolean]' };
+const o4 = { empty: is('boolean') };
 
-const j5 = {empty: 'OK'};
-const s5 = {empty: '[float]'};
-const o5 = {empty: is('float')};
+const j5 = { empty: 'OK' };
+const s5 = { empty: '[float]' };
+const o5 = { empty: is('float') };
 
-const j6 = {empty: 'OK'};
-const s6 = {empty: '[double]'};
-const o6 = {empty: is('double')};
+const j6 = { empty: 'OK' };
+const s6 = { empty: '[double]' };
+const o6 = { empty: is('double') };
 
-const j7 = {empty: '-5'};
-const s7 = {empty: '[naturalNumber]'};
-const o7 = {empty: is('naturalNumber')};
+const j7 = { empty: '-5' };
+const s7 = { empty: '[naturalNumber]' };
+const o7 = { empty: is('naturalNumber') };
 
-const j8 = {empty: '34a'};
-const s8 = {empty: '[number]'};
-const o8 = {empty: is('number')};
+const j8 = { empty: '34a' };
+const s8 = { empty: '[number]' };
+const o8 = { empty: is('number') };
 
-const j9 = {empty: 1.5};
-const s9 = {empty: '[integer]'};
-const o9 = {empty: is('integer')};
+const j9 = { empty: 1.5 };
+const s9 = { empty: '[integer]' };
+const o9 = { empty: is('integer') };
 
-const j10 = {empty: 'https://somedomain'};
-const s10 = {empty: '[url]'};
-const o10 = {empty: is('url')};
+const j10 = { empty: 'https://somedomain' };
+const s10 = { empty: '[url]' };
+const o10 = { empty: is('url') };
 
-const j11 = {empty: 'root@dom.c'};
-const s11 = {empty: '[email]'};
-const o11 = {empty: is('email')};
+const j11 = { empty: 'root@dom.c' };
+const s11 = { empty: '[email]' };
+const o11 = { empty: is('email') };
 
-const j12 = {empty: '2018'};
-const s12 = {empty: '[date]'};
-const o12 = {empty: is('date')};
+const j12 = { empty: '2018' };
+const s12 = { empty: '[date]' };
+const o12 = { empty: is('date') };
 
-const j13 = {empty: '2018-12-05:40'};
-const s13 = {empty: '[datetime]'};
-const o13 = {empty: is('datetime')};
+const j13 = { empty: '2018-12-05:40' };
+const s13 = { empty: '[datetime]' };
+const o13 = { empty: is('datetime') };
 
-const j14 = {empty: 'abc'};
-const s14 = {empty: '[length(4)]'};
-const o14 = {empty: is('length(4)')};
+const j14 = { empty: 'abc' };
+const s14 = { empty: '[length(4)]' };
+const o14 = { empty: is('length(4)') };
 
-const j15 = {empty: 'abc'};
-const s15 = {empty: '[min-length(4)]'};
-const o15 = {empty: is('min-length(4)')};
+const j15 = { empty: 'abc' };
+const s15 = { empty: '[min-length(4)]' };
+const o15 = { empty: is('min-length(4)') };
 
-const j16 = {empty: 'abc'};
-const s16 = {empty: '[max-length(2)]'};
-const o16 = {empty: is('max-length(2)')};
+const j16 = { empty: 'abc' };
+const s16 = { empty: '[max-length(2)]' };
+const o16 = { empty: is('max-length(2)') };
 
-const j17 = {empty: null};
-const s17 = {empty: '[eq(2)]'};
-const o17 = {empty: is('eq(2)')};
+const j17 = { empty: null };
+const s17 = { empty: '[eq(2)]' };
+const o17 = { empty: is('eq(2)') };
 
-const j18 = {empty: 'abc'};
-const s18 = {empty: '[lt(2)]'};
-const o18 = {empty: is('lt(2)')};
+const j18 = { empty: 'abc' };
+const s18 = { empty: '[lt(2)]' };
+const o18 = { empty: is('lt(2)') };
 
-const j19 = {empty: 0};
-const s19 = {empty: '[gt(2)]'};
-const o19 = {empty: is('gt(2)')};
+const j19 = { empty: 0 };
+const s19 = { empty: '[gt(2)]' };
+const o19 = { empty: is('gt(2)') };
 
-const j20 = {empty:  15};
-const s20 = {empty: '[lte(10)]'};
-const o20 = {empty: is('lte(10)')};
+const j20 = { empty: 15 };
+const s20 = { empty: '[lte(10)]' };
+const o20 = { empty: is('lte(10)') };
 
-const j21 = {empty: '50'};
-const s21 = {empty: '[gte(51)]'};
-const o21 = {empty: is('gte(51)')};
+const j21 = { empty: '50' };
+const s21 = { empty: '[gte(51)]' };
+const o21 = { empty: is('gte(51)') };
 
 
 // Valid Case

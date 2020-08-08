@@ -1,12 +1,12 @@
 
 const tap = require('tap');
-const { validate, is, typeOf, exact } = require('../index.js');
+const { validate, typeOf, exact } = require('../index.js');
 
 const json = {
     key1: 'OK',
     key2: 'Yes',
     key3: () => {
-    },
+    }
 };
 
 const validPattern1 = {
@@ -26,7 +26,6 @@ const invalidPattern1 = {
     key2: (val) => val === 'no',
     key3: '(function)'
 };
-
 
 // Valid Case
 tap.test('Functional', function (t) {

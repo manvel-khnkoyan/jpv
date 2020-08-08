@@ -8,8 +8,8 @@ const json = {
     number: 15,
     bigint: BigInt(9007199254740991),
     symbol: Symbol('A'),
-    function: () => {},
-    object: [],
+    function: () => { },
+    object: []
 };
 
 const validShortTagPattern = {
@@ -19,7 +19,7 @@ const validShortTagPattern = {
     bigint: '(bigint)',
     symbol: '(symbol)',
     function: '(function)',
-    object: '(object)',
+    object: '(object)'
 };
 const invalidShortTagPattern = {
     string: '(string)',
@@ -28,7 +28,7 @@ const invalidShortTagPattern = {
     bigint: '(bigint)',
     symbol: '(symbol)',
     function: '(function)',
-    object: '(object)',
+    object: '(object)'
 };
 
 const validOperatorPattern = {
@@ -38,7 +38,7 @@ const validOperatorPattern = {
     bigint: typeOf('bigint'),
     symbol: typeOf('symbol'),
     function: typeOf('function'),
-    object: typeOf('object'),
+    object: typeOf('object')
 };
 const invalidOperatorTagPattern = {
     string: typeOf('string'),
@@ -47,7 +47,7 @@ const invalidOperatorTagPattern = {
     bigint: typeOf('bigint'),
     symbol: typeOf('symbol'),
     function: typeOf('function'),
-    object: typeOf('function'), // invalid
+    object: typeOf('function') // invalid
 };
 
 // Valid Case
