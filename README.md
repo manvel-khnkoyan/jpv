@@ -54,10 +54,8 @@ $ yarn add jpv
 The easiest and most common way to compare JSON property values is to use a regular expression.
 
 ```javascript
-const json = {
-  key : "A-8",
-  value: 18
-}
+const json = {key : "A-8", value: 18 }
+
 const pattern = {
   key : /^[A-Z]-[0-9]$/,
   value: new RegExp(/\d/)
@@ -107,7 +105,7 @@ There are two way to use defined patterns:
 ```
 
 
-| example of using **is** oprator
+| example of using "**is**" oprator
 
 ```javascript
   const json = { key: "user@gmail.com" }
@@ -145,7 +143,25 @@ Library-based available patterns are (with a next to valid examples)
 - **lt(17)**  - *(16)* - less then
 - **gt(18)**  - *(19)* - greater then
 - **lte(17)**  - *(17)* - less then or equal
-- **gte(18)**  - *(18)* - greater then or equal
+- **gte(18)**  - *(18)* - greater then or equal  
+
+  
+  
+## Functional Pattern
+
+Instead of a patterns, there is also a way to customize using functions.
+
+```javascript
+  const json = {
+     name: "Mister Albert"
+  }
+  const pattern = {
+    name: (name) => name.split(' ').length > 1
+  }
+
+  jpv.validate(json, pattern)  // true
+``` 
+  
   
 ## "and", "or", "not" Logical Operators
 
@@ -209,20 +225,6 @@ Using logical operators easy to create big and complex conditions like this exam
   
 ```
   
-## Functional Pattern
-
-Instead of a patterns, there is also a way to customize using functions.
-
-```javascript
-  const json = {
-     name: "Mister Albert"
-  }
-  const pattern = {
-    name: (name) => name.split(' ').length > 1
-  }
-
-  jpv.validate(json, pattern)  // true
-``` 
 
 ## Native Types 
 
