@@ -34,7 +34,6 @@ Then, you can use the library to validate objects against patterns:
 ```javascript
 const pattern = {
   status: /ok/i,
-  name: /^\w+$/,
   meta: {
       age: x => !isNaN(x) && x > 18,
   },
@@ -42,14 +41,19 @@ const pattern = {
 
 const object = {
   status: 'OK',
-  name: 'John',
   meta: {
       age: 30,
   },
 };
 
-jpv.validate(object, pattern); 
-// returns true or false
+// Main function
+
+jpv.validate(
+  json,   // --> The JSON Object you want to validate
+  pattern // --> The json-like validation pattern
+) 
+
+// --> returns true or false
 ```
 
 
