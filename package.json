@@ -1,10 +1,20 @@
 {
   "name": "jpv",
-  "version": "2.2.2",
-  "description": "Json Pattern Validator - JSON schema validator library",
-  "main": "index.js",
+  "version": "3.0.1",
+  "description": "Flexible and powerful JSON pattern validation library with support for complex, nested structures, array validation, and a wide range of validation patterns. Includes logical operators and strict/nullable types.",
+  "type": "module",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "jest",
+    "build": "babel src -d dist"
   },
   "repository": {
     "type": "git",
@@ -14,9 +24,15 @@
     "json",
     "pattern",
     "validator",
+    "operators",
+    "strict",
     "schema",
     "regex",
-    "validate"
+    "array",
+    "validate",
+    "validation",
+    "nested",
+    "json-schema"
   ],
   "author": "Manvel Khnkoyan",
   "license": "ISC",
@@ -25,6 +41,10 @@
   },
   "homepage": "https://github.com/manvel-khnkoyan/jpv#readme",
   "devDependencies": {
-    "tap": "^14.10.8"
+    "@babel/cli": "^7.21.5",
+    "@babel/core": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
+    "@babel/preset-typescript": "^7.21.5",
+    "jest": "^29.5.0"
   }
 }
