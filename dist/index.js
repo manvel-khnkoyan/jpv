@@ -97,6 +97,16 @@ var validate = function validate(value, pattern) {
         return false;
       }
     }
+    if (Array.isArray(value)) {
+      if (value.length !== pattern.pattern.length) {
+        err({
+          value: value,
+          pattern: "strict(".concat(JSON.stringify(pattern), ")"),
+          path: path
+        });
+        return false;
+      }
+    }
     return validate(value, pattern.pattern, err, path);
   }
 
@@ -137,8 +147,12 @@ var validate = function validate(value, pattern) {
       });
       return false;
     }
+    // Apply the pattern cyclically
+    if (pattern.length === 0) {
+      return true;
+    }
     return value.every(function (v, i) {
-      return validate(v, pattern[i], err, "".concat(path, "[").concat(i, "]"));
+      return validate(v, pattern[i % pattern.length], err, "".concat(path, "[").concat(i, "]"));
     });
   }
 

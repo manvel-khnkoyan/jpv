@@ -19,7 +19,6 @@ export const not = (condition) => ({ not: condition });
 // Function to enforce a condition but also accept null
 export const nullable = (condition) => ({ nullable: true, pattern: condition });
 
-
 // Main validating function to compare the value with the pattern
 export const validate = (value, pattern, err = () => {}, path = null) => {
   // Check strict pattern
@@ -43,6 +42,14 @@ export const validate = (value, pattern, err = () => {}, path = null) => {
         return false;
       }
     }
+
+    if (Array.isArray(value)) {
+      if (value.length !== pattern.pattern.length) {
+        err({ value, pattern: `strict(${JSON.stringify(pattern)})`, path });
+        return false;
+      }
+    }
+
     return validate(value, pattern.pattern, err, path);
   }
 
@@ -75,7 +82,13 @@ export const validate = (value, pattern, err = () => {}, path = null) => {
       err({ value, pattern: JSON.stringify(pattern), path });
       return false;
     }
-    return value.every((v, i) => validate(v, pattern[i], err, `${path}[${i}]`));
+    // Apply the pattern cyclically
+    if (pattern.length === 0) {
+      return true;
+    }
+    return value.every((v, i) =>
+      validate(v, pattern[i % pattern.length], err, `${path}[${i}]`)
+    );
   }
 
   // If the pattern is a regular expression, test the value against it

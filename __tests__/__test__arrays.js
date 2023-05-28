@@ -10,7 +10,7 @@ test('does not match different array', () => {
 
 test('matches array of objects', () => {
   const data = { people: [{ name: 'John' }, { name: 'Jane' }] };
-  const pattern = { people: [{ name: 'John' }, { name: 'Jane' }] };
+  const pattern = { people: [{ name: /\w/ }] };
   expect(jpv.validate(data, pattern)).toBe(true);
 });
 

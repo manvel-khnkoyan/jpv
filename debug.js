@@ -1,21 +1,11 @@
 
 import {validate, strict} from './src/index.mjs';
 
-const pattern = {
-    status: /ok/i,
-    name: /^\w+$/,
-    meta: {
-        age: x => !isNaN(x) && x > 18,
-    },
-  };
-  
-  const object = {
-    status: 'OK',
-    name: 'John',
-    meta: {
-        age: 30,
-    },
-  };
-  
+const pattern = [
+  x =>  typeof x === 'number',
+  x =>  typeof x === 'string',
+];
 
-console.log(validate(object, pattern));
+const object = [1, 'a', 2, 'b'];
+
+console.log(validate(object, strict(pattern)));
