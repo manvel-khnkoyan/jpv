@@ -1,6 +1,6 @@
 {
   "name": "jpv",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "Flexible and powerful JSON pattern validation library with support for complex, nested structures, array validation, and a wide range of validation patterns. Includes logical operators and strict/nullable types.",
   "type": "module",
   "main": "index.cjs",
