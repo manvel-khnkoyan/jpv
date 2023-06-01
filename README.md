@@ -92,16 +92,9 @@ const pattern = {
 Like a object, arrays are validated by specifying a pattern for each element in the array. The pattern can be any valid JPV pattern, including exact values, regular expressions, functions, and logical operators.
 
 ```javascript
-const is = (type) => typeof x === type;
-const object = [
-    is('string'),
-    is('number'),
-  ]
+const object = ['Lea', '+123456789']
 
-const pattern = [
-    'Publisher',
-    9000,
-  ],
+const pattern = [/\w/,  /\+\d/],
 ```
 
 ## Array forEach
@@ -135,7 +128,7 @@ const pattern = {
   status: /ok/i,
   data: forEach({
     name: /^[\w\s]+$/,
-    age: (x) => typeof x === "number" && x > 18,
+    age: x => x > 18,
   }),
 };
 ```
