@@ -1,11 +1,7 @@
+// import { validate, strict, forEach, not } from "../dist/index.js";
+const {validate} = require('../dist/index.js');
 
-import {validate, strict} from './src/index.mjs';
+const value = { a: 1, b: 2 };
+const pattern = new Date();
 
-const pattern = [
-  x =>  typeof x === 'number',
-  x =>  typeof x === 'string',
-];
-
-const object = [1, 'a', 2, 'b'];
-
-console.log(validate(object, strict(pattern)));
+console.log(validate(value, pattern));

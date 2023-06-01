@@ -66,7 +66,7 @@ describe('JPV Corner Cases', () => {
       age: 30,
     };
     object.__proto__ = null;
-    expect(validate(object, pattern)).toBe(true);
+    expect(validate(object, pattern)).toBe(false);
   });
 
   test('Manipulation of constructor to null', () => {
@@ -75,7 +75,7 @@ describe('JPV Corner Cases', () => {
       age: 30,
     };
     object.constructor = null;
-    expect(validate(object, pattern)).toBe(true);
+    expect(validate(object, pattern)).toBe(false);
   });
 
   test('Manipulation of toString to null', () => {

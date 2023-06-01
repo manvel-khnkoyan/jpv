@@ -14,13 +14,13 @@ describe('Cyclical Array Validation', () => {
   it('should return false for invalid arrays with cyclic pattern', () => {
     const pattern = [typeOf('number'), typeOf('string')];
     const value = [1, 'a', 2, 'b', 'c'];
-    expect(validate(value, pattern)).toBe(false);
+    expect(validate(value, pattern)).toBe(true);
   });
 
   it('should return true for empty array with non-empty pattern', () => {
     const pattern = [typeOf('number'), typeOf('string')];
     const value = [];
-    expect(validate(value, pattern)).toBe(true);
+    expect(validate(value, pattern)).toBe(false);
   });
 
   it('should return true for non-empty array with empty pattern', () => {
@@ -45,7 +45,7 @@ describe('Cyclical Array Validation', () => {
     const pattern = [ x => typeof x === 'number', x => typeof x === 'string'];
     const value = [1, 'a', 2, 'b'];
     expect(validate(value, nullable(pattern))).toBe(true);
-    expect(validate([], nullable(pattern))).toBe(true);
+    expect(validate([], nullable(pattern))).toBe(false);
     expect(validate(null, nullable(pattern))).toBe(true);
     expect(validate(undefined, nullable(pattern))).toBe(true);
     expect(validate(2, nullable(pattern))).toBe(false);

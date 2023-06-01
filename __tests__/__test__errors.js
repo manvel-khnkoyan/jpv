@@ -1,24 +1,52 @@
-// Import your library
-const jpv = require('../dist/index.js');
 
-test('Throws when pattern is not an object', () => {
-  const errFunc = jest.fn();
-  jpv.validate({a: 'value'}, 'string', errFunc);
-  expect(errFunc).toHaveBeenCalled();
-});
+const {strict, and, forEach, or, not, nullable, validate} = require('../dist/index.js');
 
-test('Throws when value does not match pattern', () => {
-  const pattern = {a: 'value'};
-  const obj = {a: 'otherValue'};
-  const errFunc = jest.fn();
-  jpv.validate(obj, pattern, errFunc);
-  expect(errFunc).toHaveBeenCalled();
-});
+describe('Validation Error Tests', () => {
 
-test('Throws when value does not match complex pattern', () => {
-  const pattern = {a: {b: 'value'}};
-  const obj = {a: {b: 'otherValue'}};
-  const errFunc = jest.fn();
-  jpv.validate(obj, pattern, errFunc);
-  expect(errFunc).toHaveBeenCalled();
+  test('validate strict pattern error', () => {
+    const value = { a: 1, b: 2, c: 3 };
+    const pattern = strict({ a: 1, b: 2 });
+    expect(validate(value, pattern)).toBe(false);
+  });
+
+  test('validate and pattern error', () => {
+    const value = 15;
+    const pattern = and(
+      v => v > 0,
+      v => v < 10
+    );
+    expect(validate(value, pattern)).toBe(false);
+  });
+
+  test('validate forEach pattern error', () => {
+    const value = [1, 2, { a: 1, b: 3 }];
+    const pattern = forEach(
+      or(
+        v => v < 10,
+        strict({ a: 1, b: 2 })
+      )
+    );
+    expect(validate(value, pattern)).toBe(false);
+  });
+
+  test('validate or pattern error', () => {
+    const value = 15;
+    const pattern = or(
+      v => v < 10,
+      not(v => v === 15)
+    );
+    expect(validate(value, pattern)).toBe(false);
+  });
+
+  test('validate not pattern error', () => {
+    const value = 5;
+    const pattern = not(v => v === 5);
+    expect(validate(value, pattern)).toBe(false);
+  });
+
+  test('validate nullable pattern error', () => {
+    const value = 5;
+    const pattern = nullable(strict({ a: 1, b: 2 }));
+    expect(validate(value, pattern)).toBe(false);
+  });
 });

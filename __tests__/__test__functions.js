@@ -20,6 +20,13 @@ test('matches function with array', () => {
   expect(jpv.validate({ numbers: [1, 2, 3] }, { numbers: x => Array.isArray(x) })).toBe(true);
 });
 
+test('matches function with array', () => {
+  expect(jpv.validate({ 
+    numbers: [1, 2, 3] 
+  }, { numbers: x => Array.isArray(x) })).toBe(true);
+});
+
+
 test('does not match function with non-array', () => {
   expect(jpv.validate({ numbers: '1,2,3' }, { numbers: x => Array.isArray(x) })).toBe(false);
 });
