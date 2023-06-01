@@ -2,7 +2,6 @@
 
 JPV is an powerful library that makes JSON validation simple and painless, especially when it comes to complex and nested structures. Whether your JSON is just a couple of key-value pairs or a deeply nested, intricate object, JPV provides an elegant and efficient solution for validation.
 
-
 ## Usage
 
 How to use JPV to validate JSON objects:
@@ -20,7 +19,7 @@ const object = {
 const pattern = {
   status: /ok/i,
   meta: {
-    age: x => x > 18,
+    age: (x) => x > 18,
   },
 };
 
@@ -29,8 +28,7 @@ jpv.validate(object, pattern); // true
 
 It provides a variety of validation patterns that are both robust and flexible, catering to the exact needs of your data structures. From precise values, regular expressions, and functions to nullable and strict types, JPV has got you covered. Logical operators like and, or, not add another layer of flexibility to meet your precise validation needs.
 
-> **Warning:**  JPV 3.0.0 is a significant update from the previous versions of JPV. If you encounter issues with the current version, consider using JPV 2.2.2.
-
+> **Warning:** JPV 3.0.0 is a significant update from the previous versions of JPV. If you encounter issues with the current version, consider using JPV 2.2.2.
 
 ## Installation
 
@@ -71,8 +69,6 @@ const pattern = {
   status: true,
   version: 30,
 };
-
-jpv.validate(object, pattern); 
 ```
 
 ## Regex
@@ -80,7 +76,6 @@ jpv.validate(object, pattern);
 Regular expression in JPV is one of the general-purpose patterns that can be used to validate a wide variety of data types.
 
 ```javascript
-
 const object = {
   phone: "1234567890",
   name: "John",
@@ -90,7 +85,6 @@ const pattern = {
   phone: /^\d{10}$/,
   name: new RegExp(/^[A-Za-z]+$/),
 };
-
 ```
 
 ## Arrays
@@ -98,9 +92,7 @@ const pattern = {
 Like a object, arrays are validated by specifying a pattern for each element in the array. The pattern can be any valid JPV pattern, including exact values, regular expressions, functions, and logical operators.
 
 ```javascript
-
 const is = (type) => typeof x === type;
-
 const object = [
     is('string'),
     is('number'),
@@ -114,14 +106,12 @@ const pattern = [
 
 ## Array forEach
 
-To validate each element in an array, you can use the forEach pattern that iterates over each element in the array and validates it against the specified pattern. 
+To validate each element in an array, you can use the forEach pattern that iterates over each element in the array and validates it against the specified pattern.
 
 ```javascript
 const object = ["hello", "world", "example"];
 
 const pattern = forEach(/^[a-z]+$/);
-
-validate(array, pattern);
 ```
 
 Another example of using forEach to validate an array of objects:
@@ -147,9 +137,8 @@ const pattern = {
     name: /^[\w\s]+$/,
     age: (x) => typeof x === "number" && x > 18,
   }),
-}
+};
 ```
-
 
 ## Functions
 
@@ -226,13 +215,12 @@ const pattern = {
 To facilitate type validation, we can create a helper function **`is`**. This function accepts a type as a parameter and returns a new function. This returned function, when given a value, compares the type of the value with the expected type, returning a boolean result.
 
 ```javascript
-const is = type => value => typeof value === type;
+const is = (type) => (value) => typeof value === type;
 
 const pattern = {
-  name: is('string'),
+  name: is("string"),
 };
 ```
-
 
 # Changlog
 
@@ -243,4 +231,3 @@ This version _(3.x)_ of jpv introduces a number of changes from the previous ver
 - New strict and nullable pattern types.
 - Nested object validation.
 - forEach pattern for validating arrays.
-
